@@ -1,0 +1,106 @@
+.sidebar {
+    flex: 1;
+    height: 100vh;
+    background-color: var(--sidebar-bg);
+    border-right: 0.5px solid lightgrey;
+    color: var(--sidebar-text);
+    position: sticky;
+    top: 0;
+  
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+    }
+  
+    hr {
+      margin: 10px 0;
+      border: 0.5px solid var(--sidebar-hr);
+    }
+  
+    .center {
+      flex: 1;
+      padding-left: 10px;
+      .title {
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--sidebar-title);
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        width: 100%;
+  
+        li{
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            // justify-content: center;
+            cursor: pointer;
+            &:hover{
+                background-color: #ece8ff;
+            }
+            
+              background-color: #ece8ff;
+              .dashboard{
+                background-color: #ece8ff;
+              }
+              .users{
+                background-color: #ece8ff;
+              }
+              .product{
+                background-color: #ece8ff;
+              }
+              .sales{
+                background-color: #ece8ff;
+              }
+              .stats{
+                background-color: #ece8ff;
+              }
+              .delivery{
+                background-color: #ece8ff;
+              }
+              .profile{
+                background-color: #ece8ff;
+              }
+            
+            .icon{
+                font-size: 25px;
+                color: #7451f8;
+            }
+            span{
+                font-size: 13px;
+                font-weight: 600;
+                color: #888;
+            }
+        }
+  
+        a {
+          text-decoration: none;
+          color: inherit;
+        }
+      }
+    }
+  
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+  
+      .colorOption {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+  }
+  

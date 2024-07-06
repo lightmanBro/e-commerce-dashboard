@@ -1,0 +1,68 @@
+.productdatatable{
+    display: flex;
+    width: 100%;
+    .productdataTableTitle{
+        flex: 6;
+        .add{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            font-weight: 800;
+            font-size: 20px;
+            color: grey;
+            .link{
+                font-weight: 700;
+                font-size: 15px;
+                text-decoration: none;
+                color: green;
+                border-radius: 5px;
+                border: 1px solid green;
+                padding: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    }
+    .dataGrid{
+        width: 100%;
+        height: fit-content;
+    }
+}
+img{
+    width: 50px;
+    height: 50px;
+}
+.cellAction{
+    display: flex;
+    align-content: center;
+    gap: 10px;
+    .deleteBtn{
+        color: red;
+        font-weight: 500;
+        cursor: pointer;
+    }
+}
+.modal{
+    .delete-modal-btns{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        .yes{
+            border-radius: 5px;
+            padding: 5px 15px;
+            color: white;
+            border: none;
+            background-color: orangered;
+        }
+        .no{
+            border-radius: 5px;
+            padding: 5px 15px;
+            color: white;
+            border: none;
+            background-color: black;
+        }
+    }
+}

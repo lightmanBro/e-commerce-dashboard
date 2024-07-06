@@ -1,0 +1,72 @@
+.single {
+  display: flex;
+  width: 100%;
+  .singleContainer {
+    flex: 6;
+    .top {
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      .left {
+        flex: 1;
+        border: dotted grey 1px;
+        padding: 20px;
+        position: relative;
+        .editBtn {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 5px;
+          font-size: 12px;
+          color: #7451f8;
+          background-color: #7551f819;
+          cursor: pointer;
+          border-radius: 0 0 0 5px;
+        }
+
+        .item {
+          display: flex;
+          gap: 20px;
+          flex-direction: column;
+          .itemImg {
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+          .details {
+            display: flex;
+            flex-direction: column;
+            .itemTitle {
+              margin-bottom: 10px;
+              color: grey;
+            }
+            .detailItem {
+              margin-bottom: 10px;
+              font-size: 14px;
+
+              .itemKey {
+                color: grey;
+                font-weight: bold;
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+      }
+
+      .right {
+        flex: 2;
+      }
+      }
+        .title {
+          font-size: 16px;
+          color: lightgrey;
+          margin-bottom: 20px;
+        }
+        .bottom{
+          padding: 20px;
+          margin:10px 20px;
+        }
+  }
+}

@@ -1,0 +1,74 @@
+.listOrderTable {
+    display: flex;
+    
+    .ordertable {
+      width: 100%;
+    }
+    
+    .dataTable {
+      flex: 6;
+  
+      h1 {
+        color: gray;
+        padding-left: 10px;
+      }
+    }
+  
+    .cellWithImg {
+      display: flex;
+      align-items: center;
+    }
+  
+    .cellImg {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+  
+    .cellWithStatus {
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+    }
+  
+    .cellWithStatus.shipped {
+      background-color: #e0f7fa;
+      color: #00695c;
+    }
+  
+    .cellWithStatus.delivered {
+      background-color: #dcedc8;
+      color: #558b2f;
+    }
+  
+    .cellWithStatus.processing {
+      background-color: #fff9c4;
+      color: #fbc02d;
+    }
+  
+    .cellWithStatus.cancelled {
+      background-color: #ffcdd2;
+      color: #c62828;
+    }
+  
+    .cellAction {
+      display: flex;
+      justify-content: space-between;
+    }
+  
+    .viewBtn {
+      padding:0 ;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 500;
+      color: #007bff;
+      cursor: pointer;
+    }
+  
+    .viewBtn:hover {
+      font-weight: 800;
+    }
+  }
+  

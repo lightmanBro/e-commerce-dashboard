@@ -1,0 +1,100 @@
+// src/components/checkout/OrderSummary.scss
+.order-summary {
+    margin-bottom: 20px;
+    
+  
+    h2 {
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: gray;
+      text-align: center;
+      font-size: 20px;
+    }
+    .empty-cart{
+
+    }
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      
+      .item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        // border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+        // margin-bottom: 10px;
+        .delete-button{
+          background-color: #0079B0; 
+          width: fit-content;
+          height: fit-content;   
+          border-radius: 5px;
+          button{
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            color: white;
+            background-color: transparent;
+            border: none;
+          }
+          &:hover{
+            background-color: tomato;
+            cursor: pointer;
+          }
+
+        }
+        .img{
+          border: 2px solid tomato;
+          height: 100%;
+          img {
+            width: 150px;
+            height: 150px;
+            // margin-right: 20px;
+            text-align: center;
+          }
+        }
+  
+        .item-details {
+          .det{
+            text-align: center;
+            &:nth-child(1){
+              font-size: 20px;
+            }
+          }
+          flex: 1;
+  
+          .item-count {
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+  
+            button {
+              border-radius: 5px;
+              border: none;
+              font-size: 20px;
+              padding: 10px;
+              // background-color: #0079B0;
+              color: #0079B0;
+              cursor: pointer;
+  
+              &:hover {
+                background-color: #f0f0f0;
+              }
+            }
+  
+            span {
+              margin: 0 10px;
+              font-size: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+  

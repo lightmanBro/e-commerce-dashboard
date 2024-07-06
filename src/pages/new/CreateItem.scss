@@ -1,0 +1,156 @@
+// CreateItem.scss
+.createItem {
+    display: flex;
+    width: 100%;
+  
+    .createItemContainer {
+      flex: 4;
+      padding: 20px;
+  
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+  
+        h1 {
+          font-size: 24px;
+          color: #333;
+        }
+  
+        .successMessage {
+          color: green;
+          font-size: 18px;
+        }
+      }
+  
+      .bottom {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+  
+        form {
+          width: 100%;
+          max-width: 500px;
+  
+          .formInput {
+            margin-bottom: 15px;
+  
+            label {
+              display: block;
+              font-size: 14px;
+              color: #555;
+              margin-bottom: 5px;
+            }
+  
+            input, select {
+              width: 100%;
+              padding: 10px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              font-size: 16px;
+            }
+          }
+  
+          .upload-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            text-align: center;
+  
+            p {
+              color: #555;
+            }
+          }
+  
+          .preview {
+            display: flex;
+            flex-wrap: wrap;
+  
+            .preview-image {
+              width: 100px;
+              height: 100px;
+              object-fit: cover;
+              margin-right: 10px;
+              margin-bottom: 10px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+            }
+          }
+  
+          button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+  
+            &:hover {
+              background-color: #0056b3;
+            }
+          }
+        }
+      }
+    }
+  
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+  
+      .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+  
+        h2 {
+          margin-bottom: 20px;
+        }
+  
+        input {
+          width: calc(100% - 20px);
+          padding: 10px;
+          margin-bottom: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+  
+        button {
+          width: 45%;
+          padding: 10px;
+          margin: 5px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+  
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
+      }
+    }
+  }
+  
