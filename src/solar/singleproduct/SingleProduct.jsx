@@ -77,9 +77,9 @@ const SingleProductPage = () => {
 
     fetchProductDetails();
   }, [productId]);
-  useEffect(() => {
-    console.log("Added to cart");
-  }, [cartAdd]);
+  // useEffect(() => {
+  //   alert("Added to cart");
+  // }, [cartAdd]);
   const addToCart = async (product) => {
     // Handle adding to cart
     console.log("Added to cart:");

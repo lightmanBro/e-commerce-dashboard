@@ -8,7 +8,7 @@ const ProductDetails = ({ product, addToCart }) => (
     <h1>{product.productTitle}</h1>
     <p className="description">{product.shortDesc}</p>
     <p className="details">
-      ₦{product.price * 1 - product.discount * 1 * 100}
+      ₦{product.price - product.price * product.discount *1/100}
       {product.discount && (
         <div className="originalPrice">₦{product.price * 1}</div>
       )}

@@ -21,6 +21,7 @@ import ResetPassword from "./pages/login/forgotPassword";
 import SingleProductPage from "./solar/singleproduct/SingleProduct";
 import CheckoutPage from "./checkout/CheckoutPage";
 import AccountDetails from "./account/AccountDetails";
+import ReviewPage from "./review/Review";
 // import { DarkModeContext } from "./context/darkModeContext";
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
           <Route path="/single/:productId" element={<SingleProductPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/account" element={<AccountDetails />} />
+          <Route path="/review/:userId" element={<ReviewPage/>}/>
         </Routes>
       </BrowserRouter>
     </div>

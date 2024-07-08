@@ -23,6 +23,7 @@ const CheckoutPage = () => {
         `http://127.0.0.1:4000/cart/${"667050ecdafa4dd0270f272f"}`
       ); // Replace with actual userId
       setCartItems(response.data);
+      console.log(response.data)
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error.message);
