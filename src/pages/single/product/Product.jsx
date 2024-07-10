@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/sidebar/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../../components/navbar/Navbar";
+import { Gauge } from "@mui/x-charts/Gauge";
 import Chart from "../../../components/chart/Chart";
 import Modal from "react-modal";
 import DatePicker from "react-datepicker";
@@ -10,27 +11,24 @@ import { useAuth } from "../../../context/AuthContext";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import "./Product.scss";
-
-const stats = [
-  { month: "January", stock: 100, orders: 50 },
-  { month: "February", stock: 90, orders: 45 },
-  { month: "March", stock: 85, orders: 60 },
-  { month: "April", stock: 80, orders: 55 },
-  { month: "May", stock: 75, orders: 70 },
-  { month: "June", stock: 70, orders: 65 },
-];
+import MyGaugeComponent from "../../../components/guage/MyCuageComponent";
+import Review from "./Review";
 
 const Product = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [price, setPrice] = useState(null);
+  const [stock, setStock] = useState(null);
+  const [available, setAvailable] = useState(null);
+  const [rating, setRating] = useState(null);
+  const [reviews, setReviews] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [discountExpiry, setDiscountExpiry] = useState(new Date());
   const navigate = useNavigate();
-  const {user,token} = useAuth();
- 
+  const { user, token } = useAuth();
+
   useEffect(() => {
     // Fetch product using productId
     axios
@@ -39,12 +37,23 @@ const Product = () => {
       })
       .then((res) => {
         const { product, prices } = res.data;
+        console.log(product);
+        setStock(product.stock);
+        setAvailable(product.available);
         setProduct(product);
         setPrice(prices);
       })
       .catch((error) => {
         console.error("Error fetching product:", error);
       });
+    const getReview = async () => {
+      const response = await axios.get(
+        `http://127.0.0.1:4000/product/review/${productId}`
+      );
+      setReviews(response.data);
+    };
+
+    getReview();
   }, [productId, token]);
 
   const handleEditClick = () => {
@@ -172,11 +181,7 @@ const Product = () => {
             )}
           </div>
           <div className="right">
-            <Chart
-              aspect={2 / 1}
-              title="Product purchasing details (Last 6 months)"
-              data={stats}
-            />
+            <MyGaugeComponent product={product} />
           </div>
         </div>
         <div className="additional-details">
@@ -207,6 +212,11 @@ const Product = () => {
         </div>
         <div className="bottom">
           <h3>Product Review</h3>
+          <div className="reviews">
+            {reviews.map((review) => (
+              <Review key={review._id} review={review} />
+            ))}
+          </div>
         </div>
 
         <DiscountModal

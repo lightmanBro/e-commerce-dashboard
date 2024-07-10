@@ -79,7 +79,7 @@ const Statistics = () => {
         <div className="widget-chart-container">
           <Widget type="order" amount={summary.orders} difference={15} />
           <Chart
-            aspect={2 / 1}
+            aspect={5 / 10}
             title={`${period} Orders (Last 6 months)`}
             data={prepareChartData(summary, "orders")}
           />

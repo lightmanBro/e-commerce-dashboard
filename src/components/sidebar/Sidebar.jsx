@@ -42,40 +42,40 @@ const Sidebar = ({active}) => {
             </li>
             <li>
               <Link to="/products" style={{ textDecoration: "none" }}>
-                <Inventory2OutlinedIcon className={`icon ${active}`} />
+                <Inventory2OutlinedIcon className="icon" />
                 <span>Products</span>
               </Link>
             </li>
             <li>
               <Link to="/orders" style={{ textDecoration: "none" }}>
-                <ShoppingCartOutlinedIcon className={`icon ${active}`} />
+                <ShoppingCartOutlinedIcon className="icon" />
                 <span>Orders</span>
               </Link>
             </li>
             <li>
               <Link to="/sales" style={{ textDecoration: "none" }}>
-                <MonetizationOnOutlinedIcon className={`icon ${active}`} />
+                <MonetizationOnOutlinedIcon className="icon" />
                 <span>Sales</span>
               </Link>
             </li>
             <li>
               <Link to="/delivery" style={{ textDecoration: "none" }}>
-                <LocalShippingOutlinedIcon className={`icon ${active}`} />
+                <LocalShippingOutlinedIcon className="icon" />
                 <span>Delivery</span>
               </Link>
             </li>
             <li>
               <Link to="/statistics" style={{ textDecoration: "none" }}>
-                <BarChartOutlinedIcon className={`icon ${active}`} />
+                <BarChartOutlinedIcon className="icon" />
                 <span>Stats</span>
               </Link>
             </li>
             <li>
-              <NotificationsOutlinedIcon className={`icon ${active}`} />
+              <NotificationsOutlinedIcon className="icon" />
               <span>Notification</span>
             </li>
             <li>
-              <ListAltOutlinedIcon className={`icon ${active}`} />
+              <ListAltOutlinedIcon className="icon" />
               <span>Logs</span>
             </li>
           </>
@@ -85,40 +85,40 @@ const Sidebar = ({active}) => {
           <>
             <li>
               <Link to="/users" style={{ textDecoration: "none" }}>
-                <PersonOutlineOutlinedIcon className={`icon ${active}`} />
+                <PersonOutlineOutlinedIcon className="icon" />
                 <span>Users</span>
               </Link>
             </li>
             <li>
               <Link to="/products" style={{ textDecoration: "none" }}>
-                <Inventory2OutlinedIcon className={`icon ${active}`} />
+                <Inventory2OutlinedIcon className="icon" />
                 <span>Products</span>
               </Link>
             </li>
             <li>
               <Link to="/orders" style={{ textDecoration: "none" }}>
-                <ShoppingCartOutlinedIcon className={`icon ${active}`} />
+                <ShoppingCartOutlinedIcon className="icon" />
                 <span>Orders</span>
               </Link>
             </li>
             <li>
               <Link to="/sales" style={{ textDecoration: "none" }}>
-                <MonetizationOnOutlinedIcon className={`icon ${active}`} />
+                <MonetizationOnOutlinedIcon className="icon" />
                 <span>Sales</span>
               </Link>
             </li>
             <li>
               <Link to="/delivery" style={{ textDecoration: "none" }}>
-                <LocalShippingOutlinedIcon className={`icon ${active}`} />
+                <LocalShippingOutlinedIcon className="icon" />
                 <span>Delivery</span>
               </Link>
             </li>
             <li>
-              <NotificationsOutlinedIcon className={`icon ${active}`} />
+              <NotificationsOutlinedIcon className="icon" />
               <span>Notification</span>
             </li>
             <li>
-              <ListAltOutlinedIcon className={`icon ${active}`} />
+              <ListAltOutlinedIcon className="icon" />
               <span>Logs</span>
             </li>
           </>
@@ -128,13 +128,13 @@ const Sidebar = ({active}) => {
           <>
             <li>
               <Link to="/products" style={{ textDecoration: "none" }}>
-                <Inventory2OutlinedIcon className={`icon ${active}`} />
+                <Inventory2OutlinedIcon className="icon" />
                 <span>Products</span>
               </Link>
             </li>
             <li>
               <Link to="/sales" style={{ textDecoration: "none" }}>
-                <MonetizationOnOutlinedIcon className={`icon ${active}`} />
+                <MonetizationOnOutlinedIcon className="icon" />
                 <span>Sales</span>
               </Link>
             </li>

@@ -3,9 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import ReviewModal from "./ReviewModal";
 import "./Review.scss";
-/*
-http://localhost:3000/review/66705146dafa4dd0270f2734
-*/
+
 const ReviewPage = () => {
   const [orderItems, setOrderItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -20,6 +18,7 @@ const ReviewPage = () => {
           orderDate: order.orderDate,
         })));
         setOrderItems(items);
+        console.log(items);
       } catch (error) {
         console.error("Error fetching order items:", error);
       }
@@ -44,13 +43,13 @@ const ReviewPage = () => {
   return (
     <div className="review-page">
       <h2>Your Ordered Products</h2>
-      <div className="order-items">
+      <div className="order-list">
         {orderItems.map((item) => (
           <div className="order-item" key={item._id}>
             <img src={`http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`} alt={item.productTitle} />
             <div className="item-details">
               <p><strong>Title:</strong> {item.productTitle}</p>
-              <p><strong>Price:</strong> ${item.price}</p>
+              <p><strong>Price:</strong> ₦{item.price}</p>
               <p><strong>Quantity:</strong> {item.quantity}</p>
               <p><strong>Date:</strong> {new Date(item.orderDate).toLocaleDateString()}</p>
             </div>

@@ -1,0 +1,32 @@
+/* styles.css */
+.bottom {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .review {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  
+  .review h4 {
+    margin: 0;
+  }
+  
+  .review p {
+    margin: 5px 0;
+  }
+  
+  .star-rating {
+    display: flex;
+  }
+  
+  .star {
+    font-size: 20px;
+    color: #ccc;
+  }
+  
+  .star.filled {
+    color: #f5b301;
+  }
+  

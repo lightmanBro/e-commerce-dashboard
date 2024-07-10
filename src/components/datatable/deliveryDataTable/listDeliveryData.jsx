@@ -24,8 +24,9 @@ const columns = [
     },
   },
   { field: "customer", headerName: "Customer Name", width: 200 },
-  { field: "address", headerName: "Address", width: 250 },
+  { field: "paymentType", headerName: "Payment type", width: 250 },
   { field: "deliveryTime", headerName: "Delivery Time", width: 200 },
+  { field: "totalAmount", headerName: "Amount", width: 200 },
   {
     field: "status",
     headerName: "Status",
@@ -88,36 +89,54 @@ const fallbackRows = [
   },
 ];
 
-const Delivery = () => {
- 
+const Delivery = () => { 
   const [rows, setRows] = useState(fallbackRows);
   const navigate = useNavigate();
   const {user,token} = useAuth();
-
+  const [authToken, setToken] = useState(token);
 
   useEffect(() => {
+    setToken(token);
+  }, [token]);
+  
+  console.log(token);
+  
+  useEffect(() => {
     // Fetch delivery data from the server
-    axios
-      .get("http://127.0.0.1:4000/orders?status=shipped")
-      .then((response) => {
-        const deliveryData = response.data;
-        if (deliveryData.length > 0) {
-          setRows(deliveryData.map((order, index) => ({
-            id: order._id,
-            product: order.items.map(item => item.product.name).join(", "),
-            image: order.items.map(item => item.product.image).join(", "),
-            customer: order.customer.name,
-            address: order.deliveryAddress,
-            deliveryTime: new Date(order.deliveryTime).toLocaleString(),
+    const fetchDelivery = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:4000/orders/shipped", {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+  
+        console.log(response);
+        const {shippedOrders} = response.data; // Adjusting to access the correct data structure
+        // if (!Array.isArray(shippedOrders)) {
+        //   throw new Error("Invalid response data format");
+        // }
+  
+        setRows(
+          shippedOrders.map((order) => ({
+            id: order.orderId,
+            product: order.items.map((item) => item.productId.productTitle).join(", "),
+            image: order.items.map((item) => `http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`), // Assuming `image` is a property
+            customer: `${order.customer.firstName} ${order.customer.lastName}`,
+            paymentType: order.paymentType,
+            deliveryTime: new Date(order.deliveryDate).toLocaleString(),
+            totalAmount:order.totalAmount,
             status: order.status,
-          })));
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching delivery data:", error);
-      });
-  }, []);
-
+          }))
+        );
+  
+        console.log(shippedOrders);
+      } catch (error) {
+        console.error("Error fetching delivery data:", error.message);
+      }
+    };
+  
+    fetchDelivery();
+  }, [authToken]);
+  
   const actionColumn = [
     {
       field: "action",
@@ -126,7 +145,7 @@ const Delivery = () => {
       renderCell: (param) => {
         return (
           <div className="cellAction">
-            <Link to={`/orders/${param.row.id}`}>
+            <Link to={`/orders/${param.row._id}`}>
               <div className="viewBtn">View</div>
             </Link>
           </div>

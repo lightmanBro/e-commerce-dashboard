@@ -1,7 +1,7 @@
 .modal-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
+    // position: fixed;
+    // top: 50%;
+    // left: 50%;
     width: fit-content;
     height: fit-content;
     background: rgba(0, 0, 0, 0.5);
@@ -18,7 +18,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     // width: 90%;
     max-width: 500px;
-    // position: relative;
+    position: relative;
   
     h2 {
       margin-bottom: 20px;
