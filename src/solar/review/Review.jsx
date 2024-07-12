@@ -1,15 +1,11 @@
 import React from 'react';
-
+import Review from '../../pages/single/product/Review';
 const Reviews = ({ reviews }) => {
   return (
     <div className="reviews">
       <h2>Reviews</h2>
       {reviews.map((review, index) => (
-        <div key={index} className="review">
-          <p><strong>{review.customer.name}</strong></p>
-          <p>{review.comment}</p>
-          <p>Rating: {review.rating}</p>
-        </div>
+        <Review review={review}/>
       ))}
     </div>
   );

@@ -106,7 +106,7 @@ const SingleProductPage = () => {
     <>
       <div className="single-product-page">
         <div className="left">
-        <ProductImage imageUrl={product.mediaFilesPicture[0]} discount={product.discount} />
+        <ProductImage imageUrls={product.mediaFilesPicture} discount={product.discount} />
           {/* <RecentlyViewed /> */}
         </div>
         <div className="right">

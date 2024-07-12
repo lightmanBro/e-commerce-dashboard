@@ -1,20 +1,51 @@
 .product-image {
   position: relative;
-  display: inline-block;
-  width: 100%;
+  // border: 1px solid blue;
+  // min-height: 300px;
+  // height: 500px;
   .discount-badge {
     position: absolute;
     top: 10px;
     left: 10px;
     background-color: red;
     color: white;
-    padding: 5px 10px;
+    padding: 5px;
     border-radius: 5px;
-    font-weight: bold;
+    z-index: 1;
+  }
+  .slider {
+    margin: auto;
+    max-width: 750px;
+    max-height: fit-content;
+    // display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slick-slide {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 
-  img {
+  .slick-slide img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    border-radius: 5px;
+    object-fit: fill;
+    image-rendering: optimizeSpeed;
+  }
+
+  .slick-prev,
+  .slick-next {
+    color: black;
+    z-index: 2;
+  }
+
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 }

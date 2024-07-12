@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "./style/dark.scss";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import Home from "./pages/home/Home";
 import Login from "./pages/login/login"; // Correct capitalization of import
 import List from "./pages/list/List";

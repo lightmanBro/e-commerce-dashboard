@@ -21,13 +21,15 @@
     }
   
     .left {
-      border: 3px solid blue;
+      // border: 3px solid blue;
       align-self: flex-start;
+      
+
     }
   
     .right {
       position: relative;
-      border: 2px solid yellow;
+      // border: 2px solid yellow;
       align-items: flex-start;
       .product-details {
         top: 0;
@@ -84,7 +86,7 @@
       }
   
       .review {
-        border-bottom: 1px solid #ccc;
+        // border-bottom: 1px solid #ccc;
         padding: 10px 0;
       }
   
