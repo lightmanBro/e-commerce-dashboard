@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import './Auth.scss';
 
 const ResetPassword = () => {
@@ -11,6 +12,13 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   const { token } = useParams();
 
+  useEffect(() => {
+    // Check if token is available in the URL params
+    if (!token) {
+      setError('No token provided');
+    }
+  }, [token]);
+
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -18,7 +26,11 @@ const ResetPassword = () => {
       return;
     }
     try {
-      const response = await axios.post(`http://127.0.0.1:4000/reset-password/${token}`, { password });
+      const response = await axios.post(`http://127.0.0.1:4000/reset-password/${token}`, { password }, {
+        headers: {
+          'Authorization': `Bearer ${Cookies.get('authToken')}`, // Include token in headers if needed
+        },
+      });
       setMessage('Password reset successful');
       setError('');
       navigate('/login');

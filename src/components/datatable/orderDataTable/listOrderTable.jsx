@@ -1,51 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import '../orderDataTable/listOrderTable.scss';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
 import Sidebar from '../../sidebar/Sidebar';
 import Navbar from '../../navbar/Navbar';
 import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
+import Cookies from 'js-cookie'; // Import js-cookie for cookie handling
 
 const Orders = () => {
-  const {token,user} = useAuth();
   const [orders, setOrders] = useState([]);
-  const [userData, setUserData] = useState(user);
-  const [authToken, setToken] = useState(token);
+  const [authToken, setAuthToken] = useState(Cookies.get('token')); // Get token from cookies
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user'))); // Get user from local storage
   const navigate = useNavigate();
-  console.log(token)
+
   useEffect(() => {
-    setToken(token);
-    setUserData(user);
-  }, [user, token, navigate]);
+    setAuthToken(Cookies.get('token')); // Update token from cookies
+    setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
+  }, []);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:4000/orders/list',{
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOrders(response.data.orders);
-        if(response.data.orders.length > 0){
-          setOrders(response.data.orders.map(order=>({
-            id:order.orderId,
-            _id:order._id,
-            customerId:order.customer._id,
-            customer:`${order.customer.firstName ? order.customer.firstName :""} ${order.customer.lastname ? order.customer.lastname:""}`,
-            email:order.customer.email,
-            orderDate: new Date(order.orderDate).toLocaleDateString(),
-            totalAmount:order.totalAmount,
-            items:order.items.length
-          })))
+        if (!authToken) {
+          navigate("/login"); // Redirect if no token is found
+          return;
         }
+
+        const response = await axios.get('http://127.0.0.1:4000/orders/list', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+
+        const formattedOrders = response.data.orders.map(order => ({
+          id: order.orderId,
+          _id: order._id,
+          customerId: order.customer._id,
+          customer: `${order.customer.firstName || ""} ${order.customer.lastName || ""}`,
+          email: order.customer.email,
+          orderDate: new Date(order.orderDate).toLocaleDateString(),
+          totalAmount: order.totalAmount,
+          items: order.items.length,
+        }));
+
+        setOrders(formattedOrders);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching orders:", error);
+        if (error.response?.status === 401) {
+          navigate("/login"); // Redirect to login on unauthorized access
+        }
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [authToken, navigate]);
 
   const columns = [
     { field: 'id', headerName: 'Order ID', width: 150 },
@@ -57,17 +64,17 @@ const Orders = () => {
       renderCell: (params) => (
         <div className="cellAction">
           <Link to={`/users/${params.row.customerId}`}>
-           { params.row.customer}
+            {params.row.customer}
           </Link>
         </div>
       ),
     },
-    { field: 'email', headerName: 'Customer mail', width: 150 },
+    { field: 'email', headerName: 'Customer Mail', width: 150 },
     {
       field: 'orderDate',
       headerName: 'Order Date',
       width: 200,
-      type: 'Date',
+      type: 'date',
     },
     {
       field: 'totalAmount',
@@ -92,7 +99,7 @@ const Orders = () => {
     <div className="listOrderTable">
       <Sidebar />
       <div className="dataTable">
-      <Navbar user={user}/>
+        <Navbar user={userData} />
         <h1>Order Lists</h1>
         <div className="orderTable">
           <DataGrid

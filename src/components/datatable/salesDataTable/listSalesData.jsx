@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
+import Cookies from 'js-cookie'; // Import js-cookie for cookie handling
 import "./listSalesData.scss";
 import Receipt from "../receipt/Receipt";
 import Sidebar from "../../sidebar/Sidebar";
 import Navbar from "../../navbar/Navbar";
 
 const SalesPage = () => {
-  const {user,token} = useAuth();
-  const [userData, setUserData] = useState(user);
-  const [authToken, setToken] = useState(token);
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user'))); // Get user from local storage
+  const [authToken, setAuthToken] = useState(Cookies.get('token')); // Get token from cookies
   const [items, setItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -20,13 +19,16 @@ const SalesPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setToken(token);
-    setUserData(user);
-  }, [user, token, navigate]);
+    setAuthToken(Cookies.get('token')); // Update token from cookies
+    setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
 
-  useEffect(() => {
     const fetchItems = async () => {
       try {
+        if (!authToken) {
+          navigate("/login"); // Redirect if no token is found
+          return;
+        }
+
         const response = await axios.get("http://127.0.0.1:4000/products/all", {
           headers: { Authorization: `Bearer ${authToken}` },
         });
@@ -38,7 +40,7 @@ const SalesPage = () => {
     };
 
     fetchItems();
-  }, []);
+  }, [authToken, navigate]);
 
   const handleAddItem = (item) => {
     setSelectedItems([...selectedItems, { ...item, quantity: 1 }]);
@@ -70,6 +72,11 @@ const SalesPage = () => {
 
   const handleCompleteSale = async () => {
     try {
+      if (!userData) {
+        navigate("/login"); // Redirect if no user data is found
+        return;
+      }
+
       // Prepare data for the POST request
       const salesperson = userData._id; // Replace with actual salesperson data
       const salesType = "shop"; // Assuming this is fixed for shop sales
@@ -125,7 +132,7 @@ const SalesPage = () => {
     <div className="salesPage">
       <Sidebar />
       <div className="top">
-      <Navbar user={user}/>
+        <Navbar user={userData} />
         <div className="salesAction">
           <h1>Sales Page</h1>
           <div className="search">

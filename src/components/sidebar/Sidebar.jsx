@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dashboard as DashboardIcon,
   PersonOutlineOutlined as PersonOutlineOutlinedIcon,
@@ -13,15 +13,29 @@ import {
   MonetizationOnOutlined as MonetizationOnOutlinedIcon,
 } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // Adjust the import path as necessary
+import Cookies from "js-cookie";
 import "./Sidebar.scss";
 
-const Sidebar = ({active}) => {
-  const { logoutUser,token,user } = useAuth();
+const Sidebar = ({ active }) => {
+  const [user, setUser] = useState(null);
+  const token = Cookies.get("authToken"); // Get token from cookies
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchUser = () => {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const handleLogout = () => {
-    logoutUser(); // Clear user data from context and localStorage
+    // Clear user data from localStorage and cookies
+    localStorage.removeItem("user");
+    Cookies.remove("authToken");
     navigate("/login"); // Redirect to login page
   };
 

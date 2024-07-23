@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { useAuth } from "../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 import Sidebar from "../../sidebar/Sidebar";
 import Navbar from "../../navbar/Navbar";
 import "../orderDataTable/listOrderTable.scss";
@@ -92,51 +91,52 @@ const fallbackRows = [
 const Delivery = () => { 
   const [rows, setRows] = useState(fallbackRows);
   const navigate = useNavigate();
-  const {user,token} = useAuth();
-  const [authToken, setToken] = useState(token);
+  const [user, setUser] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
 
   useEffect(() => {
-    setToken(token);
-  }, [token]);
-  
-  console.log(token);
-  
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const token = Cookies.get('token');
+
+    if (token) {
+      setAuthToken(token);
+      setUser(storedUser);
+    } else {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   useEffect(() => {
-    // Fetch delivery data from the server
     const fetchDelivery = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:4000/orders/shipped", {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-  
-        console.log(response);
-        const {shippedOrders} = response.data; // Adjusting to access the correct data structure
-        // if (!Array.isArray(shippedOrders)) {
-        //   throw new Error("Invalid response data format");
-        // }
-  
-        setRows(
-          shippedOrders.map((order) => ({
-            id: order.orderId,
-            product: order.items.map((item) => item.productId.productTitle).join(", "),
-            image: order.items.map((item) => `http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`), // Assuming `image` is a property
-            customer: `${order.customer.firstName} ${order.customer.lastName}`,
-            paymentType: order.paymentType,
-            deliveryTime: new Date(order.deliveryDate).toLocaleString(),
-            totalAmount:order.totalAmount,
-            status: order.status,
-          }))
-        );
-  
-        console.log(shippedOrders);
-      } catch (error) {
-        console.error("Error fetching delivery data:", error.message);
+      if (authToken) {
+        try {
+          const response = await axios.get("http://127.0.0.1:4000/orders/shipped", {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+
+          const { shippedOrders } = response.data;
+
+          setRows(
+            shippedOrders.map((order) => ({
+              id: order.orderId,
+              product: order.items.map((item) => item.productId.productTitle).join(", "),
+              image: order.items.map((item) => `http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`),
+              customer: `${order.customer.firstName} ${order.customer.lastName}`,
+              paymentType: order.paymentType,
+              deliveryTime: new Date(order.deliveryDate).toLocaleString(),
+              totalAmount: order.totalAmount,
+              status: order.status,
+            }))
+          );
+        } catch (error) {
+          console.error("Error fetching delivery data:", error.message);
+        }
       }
     };
-  
+
     fetchDelivery();
   }, [authToken]);
-  
+
   const actionColumn = [
     {
       field: "action",
@@ -158,7 +158,7 @@ const Delivery = () => {
     <div className="listOrderTable">
       <Sidebar />
       <div className="dataTable">
-      <Navbar user={user}/>
+        <Navbar user={user} />
         <h1>Delivery List</h1>
         <div className="orderTable">
           <DataGrid

@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./ListProductData.scss";
 import { DataGrid } from "@mui/x-data-grid";
-import { useAuth } from "../../../context/AuthContext";
+import { useState, useEffect } from "react";
+import Modal from "react-modal";
+import Cookies from 'js-cookie'; // Import js-cookie for cookie handling
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../sidebar/Sidebar";
 import Navbar from "../../navbar/Navbar";
-import { useState, useEffect } from "react";
-import Modal from "react-modal";
 
 const columns = [
   { field: "findId", headerName: "ID", width: 70 },
@@ -57,9 +57,8 @@ const columns = [
 ];
 
 const ListProductDatatable = () => {
-  const {user,token} = useAuth();
-  const [userData, setUserData] = useState(user);
-  const [authToken, setToken] = useState(token);
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user'))); // Get user from local storage
+  const [authToken, setAuthToken] = useState(Cookies.get('token')); // Get token from cookies
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -67,18 +66,24 @@ const ListProductDatatable = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setToken(token);
-    setUserData(user);
+    setAuthToken(Cookies.get('token')); // Update token from cookies
+    setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
     const controller = new AbortController();
     const signal = controller.signal;
 
-    axios
-      .get("http://127.0.0.1:4000/products/all", {
-        signal,
-        headers: { Authorization: `Bearer ${authToken}` },
-      })
-      .then((res) => {
-        const transformedData = res.data.map((item) => ({
+    const fetchProducts = async () => {
+      try {
+        if (!authToken) {
+          navigate("/login"); // Redirect if no token is found
+          return;
+        }
+
+        const response = await axios.get("http://127.0.0.1:4000/products/all", {
+          signal,
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+
+        const transformedData = response.data.map((item) => ({
           id: item._id,
           findId: item.findId,
           name: item.productTitle,
@@ -91,23 +96,25 @@ const ListProductDatatable = () => {
               ? `http://127.0.0.1:4000/item-media-files/${item.mediaFilesPicture[0]}`
               : "default-image-url",
         }));
+
         setRows(transformedData);
-      })
-      .catch((err) => {
+      } catch (err) {
         if (axios.isCancel(err)) {
           console.log("Request canceled", err.message);
         } else {
           setError(err.message);
           console.error("Error fetching products:", err);
         }
-      });
+      }
+    };
+
+    fetchProducts();
 
     return () => {
       controller.abort();
     };
-  }, [user, token, navigate]);
+  }, [authToken, navigate]);
 
-  console.log(authToken,userData);
   const handleDeleteClick = (id) => {
     setDeleteProductId(id);
     setShowDeleteModal(true);
@@ -116,7 +123,7 @@ const ListProductDatatable = () => {
   const handleDeleteConfirm = async () => {
     try {
       await axios.delete(
-        `http://127.0.0.1:4000/product/delete/:id${deleteProductId}`,
+        `http://127.0.0.1:4000/product/delete/${deleteProductId}`, // Fixed URL formatting
         {
           headers: { Authorization: `Bearer ${authToken}` },
         }
@@ -163,7 +170,7 @@ const ListProductDatatable = () => {
     <div className="productdatatable">
       <Sidebar />
       <div className="productdataTableTitle">
-      <Navbar user={userData}/>
+        <Navbar user={userData} />
         <div className="add">
           Add New Product
           <Link to="/products/new" className="link">

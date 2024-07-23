@@ -1,24 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token,setToken] = useState(null);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [token, setToken] = useState(Cookies.get('token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const storedToken = Cookies.get('token');
+    if (storedToken) {
       axios.get('http://127.0.0.1:4000/validate-token', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${storedToken}` }
       })
       .then(response => {
         setUser(response.data.user);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       })
       .catch(() => {
-        localStorage.removeItem('token');
+        Cookies.remove('token');
+        localStorage.removeItem('user');
       })
       .finally(() => setLoading(false));
     } else {
@@ -29,9 +32,15 @@ export const AuthProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post('http://127.0.0.1:4000/login', { email, password });
-      setToken(response.data.token);
-      setUser(response.data.userData);
-      console.log(response.data)
+      const token = response.data.token;
+      const userData = response.data.userData;
+
+      setToken(token);
+      setUser(userData);
+
+      Cookies.set('token', token, { expires: 7 });
+      localStorage.setItem('user', JSON.stringify(userData));
+
       return response.data;
     } catch (error) {
       console.error('Login failed:', error.message);
@@ -46,8 +55,12 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`
         }
       });
+
       setToken(null);
       setUser(null);
+
+      Cookies.remove('token');
+      localStorage.removeItem('user');
     } catch (error) {
       console.error('Logout failed:', error.message);
       throw error;
@@ -63,9 +76,9 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
-  
+
   return (
-    <AuthContext.Provider value={{ user,token, loading, loginUser, logoutUser }}>
+    <AuthContext.Provider value={{ loading, loginUser, logoutUser, registerAdmin }}>
       {children}
     </AuthContext.Provider>
   );

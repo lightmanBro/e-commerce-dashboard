@@ -2,15 +2,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { useAuth } from "../../context/AuthContext";
 import "./New.scss";
 
 const New = ({ inputs, title }) => {
-  const { user, token } = useAuth();
-  const navigate = useNavigate();
-
+ 
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
   const [files, setFiles] = useState([]);
@@ -24,15 +23,17 @@ const New = ({ inputs, title }) => {
   const [newBrand, setNewBrand] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [newSubcategory, setNewSubcategory] = useState("");
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = Cookies.get('token');
 
-  useEffect(() => {
-    if (!token) {
-      navigate("/");
+
+    if (token) {
     } else {
-      fetchClassData();
+      navigate("/login");
     }
-  }, [token, user, navigate]);
-
+    
+    
   const fetchClassData = async () => {
     try {
       const res = await axios.get("http://127.0.0.1:4000/get-class-data", {
@@ -46,7 +47,8 @@ const New = ({ inputs, title }) => {
       console.error("Error fetching class data:", error);
     }
   };
-
+  fetchClassData()
+  
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     maxFiles: 5,
@@ -75,10 +77,7 @@ const New = ({ inputs, title }) => {
 
       files.forEach((file) => {
         itemFormData.append(`files`, file);
-        console.log(file)
       });
-      
-      console.log(itemFormData.entries());
 
       let endpoint = "";
       if (title === "Add new Product") {
@@ -171,53 +170,44 @@ const New = ({ inputs, title }) => {
     });
   };
 
-  const handleLongPress = (item, type) => {
+  const handleDeleteButtonClick = (item, type) => {
     setModal({ type: "delete", show: true, data: { item, type } });
   };
 
   const handleDeleteItem = async () => {
     const { item, type } = modal.data;
-
+  
     let endpoint = "";
     if (type === "category") {
-      endpoint = `http://127.0.0.1:4000/delete-category/${item}`;
+      endpoint = `http://127.0.0.1:4000/delete-class-data`;
     } else if (type === "subcategory") {
-      endpoint = `http://127.0.0.1:4000/delete-subcategory/${item}`;
+      endpoint = `http://127.0.0.1:4000/delete-class-data`;
     }
-
+  
     try {
-      await axios.delete(endpoint);
-
-      if (type === "category") {
-        setCategories(categories.filter((category) => category !== item));
-      } else if (type === "subcategory") {
-        setSubcategories(subcategories.filter((subcategory) => subcategory !== item));
+      const response = await axios.delete(endpoint, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { type, title: item } // Send the data in the body of the request
+      });
+  
+      if (response.status === 200) {
+        if (type === "category") {
+          setCategories(categories.filter((category) => category !== item));
+        } else if (type === "subcategory") {
+          setSubcategories(subcategories.filter((subcategory) => subcategory !== item));
+        }
+  
+        setSuccessMessage(`${type.slice(0, -1)} deleted successfully!`);
+        setModal({ ...modal, show: false });
       }
-
-      setSuccessMessage(`${type.slice(0, -1)} deleted successfully!`);
-      setModal({ ...modal, show: false });
     } catch (error) {
       console.error(`Error deleting ${type}:`, error);
     }
   };
-
+  
   const closeModal = () => {
     setModal({ ...modal, show: false });
   };
-
-  if (user.role === "customer" || user.role === "sales") {
-    return (
-      <div className="new">
-        <Sidebar />
-        <div className="newContainer">
-          <Navbar />
-          <div className="top">
-            <h1>This page doesn't exist</h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="new">
@@ -232,14 +222,14 @@ const New = ({ inputs, title }) => {
           <div className="left">
             {title === "Add new User" && (
               <div className="drag-and-drop-area" {...getRootProps()}>
-              <input {...getInputProps()} />
-              <p>Drag 'n' drop some files here, or click to select files</p>
-              <div className="image-previews">
-                {files.map((file) => (
-                  <img key={file.name} src={file.preview} alt={file.name} />
-                ))}
+                <input {...getInputProps()} />
+                <p>Drag 'n' drop some files here, or click to select files</p>
+                <div className="image-previews">
+                  {files.map((file) => (
+                    <img key={file.name} src={file.preview} alt={file.name} />
+                  ))}
+                </div>
               </div>
-            </div>
             )}
             {title === "Add new Product" && (
               <div className="drag-and-drop-area" {...getRootProps()}>
@@ -260,14 +250,13 @@ const New = ({ inputs, title }) => {
                   <label>{input.label}</label>
                   <input
                     type={input.type}
-                    name={input.name}
                     placeholder={input.placeholder}
+                    name={input.name}
                     value={formData[input.name] || ""}
                     onChange={handleInputChange}
                   />
                 </div>
               ))}
-
               {title === "Add new Product" && (
                 <>
                   <div className="formInput">
@@ -277,9 +266,7 @@ const New = ({ inputs, title }) => {
                       value={formData.brand || ""}
                       onChange={handleBrandChange}
                     >
-                      <option value="" disabled>
-                        Select a brand
-                      </option>
+                      <option value="">Select a brand</option>
                       {brands.map((brand) => (
                         <option key={brand} value={brand}>
                           {brand}
@@ -288,95 +275,81 @@ const New = ({ inputs, title }) => {
                       <option value="add-new">Add new brand</option>
                     </select>
                   </div>
-
                   <div className="formInput">
                     <label>Categories</label>
-                    <div className="categoryContainer">
-                      {categories.map((category) => (
-                        <div
-                          key={category}
-                          className={`categoryItem ${
-                            formData.category &&
-                            formData.category.includes(category)
-                              ? "selected"
-                              : ""
-                          }`}
-                          onClick={() => handleSelectItem(category, "category")}
-                          onTouchStart={() => {
-                            this.longPressTimer = setTimeout(
-                              () => handleLongPress(category, "category"),
-                              2000
-                            );
-                          }}
-                          onTouchEnd={() => {
-                            clearTimeout(this.longPressTimer);
-                          }}
+                    {categories.map((category) => (
+                      <div key={category} className="categoryItem">
+                        <input
+                          type="checkbox"
+                          name="categories"
+                          value={category}
+                          checked={formData.categories?.includes(category) || false}
+                          onChange={() => handleSelectItem(category, "categories")}
+                        />
+                        <span>{category}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteButtonClick(category, "category")}
                         >
-                          {category}
-                        </div>
-                      ))}
-                    </div>
+                          X
+                        </button>
+                      </div>
+                    ))}
                     <button
                       type="button"
-                      onClick={() => setModal({ type: "category", show: true, data: null })}
+                      onClick={() => setModal({ type: "category", show: true })}
                     >
                       Add new category
                     </button>
                   </div>
-
                   <div className="formInput">
                     <label>Subcategories</label>
-                    <div className="subcategoryContainer">
-                      {subcategories.map((subcategory) => (
-                        <div
-                          key={subcategory}
-                          className={`subcategoryItem ${
-                            formData.subcategory &&
-                            formData.subcategory.includes(subcategory)
-                              ? "selected"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            handleSelectItem(subcategory, "subcategory")
-                          }
-                          onTouchStart={() => {
-                            this.longPressTimer = setTimeout(
-                              () => handleLongPress(subcategory, "subcategory"),
-                              2000
-                            );
-                          }}
-                          onTouchEnd={() => {
-                            clearTimeout(this.longPressTimer);
-                          }}
+                    {subcategories.map((subcategory) => (
+                      <div key={subcategory} className="subcategoryItem">
+                        <input
+                          type="checkbox"
+                          name="subcategories"
+                          value={subcategory}
+                          checked={formData.subcategories?.includes(subcategory) || false}
+                          onChange={() => handleSelectItem(subcategory, "subcategories")}
+                        />
+                        <span>{subcategory}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteButtonClick(subcategory, "subcategory")}
                         >
-                          {subcategory}
-                        </div>
-                      ))}
-                    </div>
+                          X
+                        </button>
+                      </div>
+                    ))}
                     <button
                       type="button"
-                      onClick={() => setModal({ type: "subcategory", show: true, data: null })}
+                      onClick={() => setModal({ type: "subcategory", show: true })}
                     >
                       Add new subcategory
                     </button>
                   </div>
+                </>
+              )}
+              {title === "Add new Product" && (
+                <>
                   <div className="formInput">
                     <label>Status</label>
                     <select
-                      name="status"
+                      name="itemStatus"
                       value={itemStatus}
                       onChange={(e) => setItemStatus(e.target.value)}
                     >
                       <option value="draft">Draft</option>
                       <option value="publish">Publish</option>
-                      <option value="schedule">Schedule Publish</option>
+                      <option value="schedule">Schedule</option>
                     </select>
                   </div>
                   {itemStatus === "schedule" && (
                     <div className="formInput">
                       <label>Publish Date</label>
                       <input
-                        type="date"
+                        type="datetime-local"
                         name="publishDate"
                         value={publishDate}
                         onChange={(e) => setPublishDate(e.target.value)}
@@ -385,92 +358,57 @@ const New = ({ inputs, title }) => {
                   )}
                 </>
               )}
-              {title === "Add new User" && (
-                <>
-                  <label>User role</label>
-                  <select name="role" onChange={handleInputChange} required>
-                    <option value="" disabled>Select a role</option>
-                    <option value="support">Support</option>
-                    <option value="sales">Sales</option>
-                  </select>
-                </>
-              )}
-
-              <button type="submit">Add {title.split(' ')[2]}</button>
+              <button type="submit">Send</button>
             </form>
           </div>
         </div>
+        {modal.show && (
+          <div className="modal">
+            <div className="modalContent">
+              <h2>
+                {modal.type === "delete"
+                  ? `Delete ${modal.data.type.slice(0, -1)}`
+                  : `Add new ${modal.type}`}
+              </h2>
+              {modal.type === "delete" ? (
+                <>
+                  <p>
+                    Are you sure you want to delete {modal.data.item} from{" "}
+                    {modal.data.type}?
+                  </p>
+                  <button onClick={handleDeleteItem}>Yes</button>
+                  <button onClick={closeModal}>No</button>
+                </>
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    value={
+                      modal.type === "brand"
+                        ? newBrand
+                        : modal.type === "category"
+                        ? newCategory
+                        : newSubcategory
+                    }
+                    onChange={(e) =>
+                      modal.type === "brand"
+                        ? setNewBrand(e.target.value)
+                        : modal.type === "category"
+                        ? setNewCategory(e.target.value)
+                        : setNewSubcategory(e.target.value)
+                    }
+                    placeholder={`Enter new ${modal.type}`}
+                  />
+                  <button onClick={handleAddItem}>Add</button>
+                  <button onClick={closeModal}>Cancel</button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-
-      {modal.show && modal.type === "brand" && (
-        <ModalAddItem
-          title="Add New Brand"
-          value={newBrand}
-          onChange={(e) => setNewBrand(e.target.value)}
-          onAdd={handleAddItem}
-          onClose={closeModal}
-        />
-      )}
-
-      {modal.show && modal.type === "category" && (
-        <ModalAddItem
-          title="Add New Category"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-          onAdd={handleAddItem}
-          onClose={closeModal}
-        />
-      )}
-
-      {modal.show && modal.type === "subcategory" && (
-        <ModalAddItem
-          title="Add New Subcategory"
-          value={newSubcategory}
-          onChange={(e) => setNewSubcategory(e.target.value)}
-          onAdd={handleAddItem}
-          onClose={closeModal}
-        />
-      )}
-
-      {modal.show && modal.type === "delete" && (
-        <ModalDeleteItem
-          title={`Delete ${modal.data.type.slice(0, -1)}`}
-          message={`Are you sure you want to delete this ${modal.data.type.slice(0, -1)}?`}
-          onDelete={handleDeleteItem}
-          onCancel={closeModal}
-        />
-      )}
-
-      {successMessage && <div className="successMessage">{successMessage}</div>}
     </div>
   );
 };
-
-const ModalAddItem = ({ title, value, onChange, onAdd, onClose }) => (
-  <div className="modal">
-    <div className="modalContent">
-      <h2>{title}</h2>
-      <input
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder={`${title} Name`}
-      />
-      <button onClick={onAdd}>Add {title.split(" ")[1]}</button>
-      <button onClick={onClose}>Close</button>
-    </div>
-  </div>
-);
-
-const ModalDeleteItem = ({ title, message, onDelete, onCancel }) => (
-  <div className="modal">
-    <div className="modalContent">
-      <h2>{title}</h2>
-      <p>{message}</p>
-      <button onClick={onDelete}>Delete</button>
-      <button onClick={onCancel}>Cancel</button>
-    </div>
-  </div>
-);
 
 export default New;

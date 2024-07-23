@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Cookies from 'js-cookie';
 import { DataGrid } from "@mui/x-data-grid";
 import "./Datatable.scss"; // Assuming you have defined your styles here
 
@@ -21,47 +20,55 @@ const columns = [
   },
   { field: "email", headerName: "User Email", width: 230 },
   { field: "role", headerName: "User Role", width: 230 },
-  { field: "lastLogin", headerName: "Last Login", type: "Date", width: 190 },
+  { field: "lastLogin", headerName: "Last Login", type: "date", width: 190 },
 ];
 
 const Datatable = () => {
-  const { user, token } = useAuth();
-  const [userData, setUserData] = useState(user);
-  const [authToken, setToken] = useState(token);
+  const [userData, setUserData] = useState(null);
+  const [authToken, setToken] = useState(null);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setToken(token);
-    setUserData(user);
-    if (!userData || !authToken) {
-      navigate("/login"); // Redirect to login if no user is found
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = Cookies.get('token');
+
+    if (token) {
+      setToken(token);
+      setUserData(user);
+    } else {
+      navigate("/login");
     }
-  }, [userData, authToken, navigate]);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:4000/users/all",{headers: { Authorization: `Bearer ${token}` }});
-        const formattedRows= response.data.map((user)=>({
-          id:user._id,
-          firstName:user.firstName,
-          email:user.email,
-          role:user.role,
-          lastLogin:new Date(user.lastLoginDate).toLocaleDateString() || "yet to"
-        }))
-        console.log(response.data,formattedRows)
-        setRows(formattedRows);
-        setLoading(false); // Turn off loading indicator
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setLoading(false); // Ensure loading indicator is turned off on error
+      if (authToken) {
+        try {
+          const response = await axios.get("http://127.0.0.1:4000/users/all", {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+
+          const formattedRows = response.data.map((user) => ({
+            id: user._id,
+            firstName: user.firstName,
+            email: user.email,
+            role: user.role,
+            lastLogin: new Date(user.lastLoginDate).toLocaleDateString() || "yet to"
+          }));
+
+          setRows(formattedRows);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching users:", error);
+          setLoading(false);
+        }
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [authToken]);
 
   const actionColumn = [
     {
@@ -73,7 +80,6 @@ const Datatable = () => {
           <Link to={`/users/${param.row.id}`}>
             <div className="viewBtn">View</div>
           </Link>
-          {/* Implement delete functionality */}
           <div
             className="deleteBtn"
             onClick={() => {
@@ -97,7 +103,7 @@ const Datatable = () => {
         </Link>
       </div>
       {loading ? (
-        <p>Loading...</p> // Show loading indicator while fetching data
+        <p>Loading...</p>
       ) : (
         <DataGrid
           className="dataGrid"

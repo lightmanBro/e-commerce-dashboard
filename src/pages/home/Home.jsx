@@ -6,23 +6,14 @@ import "../../components/widget/Widget.scss";
 import Widget from "../../components/widget/Widget";
 import Navbar from "../../components/navbar/Navbar";
 import Featured from "../../components/feature/Featured";
-import { useAuth } from "../../context/AuthContext";
 import Chart from "../../components/chart/Chart";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 const Home = () => {
-  const { user, loading, token } = useAuth();
-  const [userData, setUserData] = useState(user);
-  const [authToken, setToken] = useState(token);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [orderData, setOrderData] = useState([]);
   const [salesData, setSalesData] = useState([]);
   const [summaryData, setSummaryData] = useState({});
@@ -31,25 +22,28 @@ const Home = () => {
   const [salesPercentage, setSalesPercentage] = useState(0);
   const navigate = useNavigate();
 
-  console.log(user,token,loading)
   useEffect(() => {
-    setToken(token);
-    setUserData(user);
-    if (!user) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = Cookies.get('token');
+
+    if (token) {
+      setToken(token);
+      setUser(user);
+    } else {
       navigate("/login");
     }
-  }, [user, token, navigate]);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
       if (token) {
         try {
           const salesResponse = await axios.get("http://127.0.0.1:4000/sales/all", {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
 
           const summaryResponse = await axios.get("http://127.0.0.1:4000/summary", {
-            headers: { Authorization: `Bearer ${authToken}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
 
           setSalesData(salesResponse.data.data);
@@ -85,7 +79,7 @@ const Home = () => {
     fetchData();
   }, [token]);
 
-  if (loading) {
+  if (!user || !token) {
     return <div>Loading...</div>;
   }
 
@@ -131,7 +125,7 @@ const Home = () => {
     <div className="home">
       <Sidebar active={"dashboard"} />
       <div className="homeContainer">
-        <Navbar user={userData} />
+        <Navbar user={user} />
         <div className="widgets">{renderWidgets()}</div>
         {user && user.role === "admin" && (
           <div className="charts">

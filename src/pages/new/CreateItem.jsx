@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { useAuth } from "../../context/AuthContext";
+import Cookies from "js-cookie";
 import "./CreateItem.scss";
 
 const CreateItem = () => {
@@ -15,8 +16,8 @@ const CreateItem = () => {
   const navigate = useNavigate();
 
   const onDrop = useCallback((acceptedFiles) => {
-    setFiles([...files, ...acceptedFiles]);
-  }, [files]);
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+  }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -32,9 +33,10 @@ const CreateItem = () => {
       Object.keys(formData).forEach((key) => formDataWithFiles.append(key, formData[key]));
       files.forEach((file) => formDataWithFiles.append("files", file));
 
+      const token = Cookies.get('authToken'); // Get the token from cookies
       const response = await axios.post("/api/items", formDataWithFiles, {
         headers: {
-          Authorization: `Bearer {currentUser.token}`,
+          Authorization: `Bearer ${token}`, // Use token from cookies
         },
       });
       setSuccessMessage("Item created successfully!");
