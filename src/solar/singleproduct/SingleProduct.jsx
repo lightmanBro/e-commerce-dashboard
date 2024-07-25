@@ -6,17 +6,19 @@ import ProductImage from "../image/Image";
 import ProductDetails from "../details/ProductDetails";
 import Reviews from "../review/Review";
 import RecentlyViewed from "../recentlyviewed/RecentlyViewed";
+import Cookies from 'js-cookie';
 import "./SingleProduct.scss";
 import Suggestions from "../suggestion/Suggestion";
 import DiscountCountdown from "../discount/DiscountCountDown";
 const SingleProductPage = () => {
+  const [authToken, setAuthToken] = useState(Cookies.get('token'));
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [cartAdd, setCartAdd] = useState();
-  const { token } = useAuth();
-  console.log(token);
+  
+  console.log(authToken);
   const dummyProduct = {
     productTitle: "Dummy Solar Panel",
     shortDesc: "High efficiency solar panel",
@@ -48,6 +50,7 @@ const SingleProductPage = () => {
   ];
 
   useEffect(() => {
+    setAuthToken(Cookies.get('token'));
     const fetchProductDetails = async () => {
       try {
         const response = await axios.get(

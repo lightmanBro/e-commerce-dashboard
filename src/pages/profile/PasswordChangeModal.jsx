@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
+import Cookies from 'js-cookie'
 import "./PasswordChangeModal.scss";
 
-const PasswordChangeModal = ({ isOpen, onClose }) => {
+const PasswordChangeModal = ({token, isOpen, onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const{ token}  = useAuth();
-
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -22,8 +23,8 @@ const PasswordChangeModal = ({ isOpen, onClose }) => {
 
     try {
       const response = await axios.patch(
-        "http://127.0.0.1:4000/users/password-reset",
-        { password: currentPassword, newPassword },
+        "http://127.0.0.1:4000/user/password-reset",
+        { oldPassword: currentPassword, newPassword },
         {
           headers: {
             Authorization: `Bearer ${token}`

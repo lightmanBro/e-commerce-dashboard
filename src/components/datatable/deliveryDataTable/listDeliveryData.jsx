@@ -115,7 +115,7 @@ const Delivery = () => {
           });
 
           const { shippedOrders } = response.data;
-
+          console.log(shippedOrders)
           setRows(
             shippedOrders.map((order) => ({
               id: order.orderId,

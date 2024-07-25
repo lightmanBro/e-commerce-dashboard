@@ -1,38 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import Modal from "react-modal";
-import "react-datepicker/dist/react-datepicker.css";
+import Cookies from 'js-cookie';
 import "./Profile.scss";
-import ProfilePicUpload from "./ProfilePicUpload";
 import PasswordChangeModal from "./PasswordChangeModal";
-import axios from "axios"; // Import axios for making API requests
+import axios from "axios";
+
+Modal.setAppElement('#root'); // Add this line
 
 const Profile = () => {
- const {user,token} = useAuth();
-  const [userData, setUserData] = useState(user);
-  const [authToken, setToken] = useState(token);
+  const [authToken, setAuthToken] = useState(Cookies.get('token'));
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    setToken(token);
-    setUserData(user);
-  }, [user, token, navigate]);
 
-  const handleSaveClick = async ({
-    firstName,
-    lastName,
-    address,
-    phoneNumber,
-    email,
-  }) => {
+  useEffect(() => {
+      setAuthToken(authToken);
+      setUserData(userData);
+  }, [authToken, userData]);
+
+  const handleSaveClick = async (editedUser) => {
     try {
       const response = await axios.patch(
         "http://127.0.0.1:4000/users/update-profile",
-        { firstName, lastName, address, phoneNumber },
+        { ...editedUser },
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -40,32 +34,20 @@ const Profile = () => {
         }
       );
       if (response.data.status === "Successful") {
-        setUserData({
-          firstName,
-          lastName,
-          address,
-          phoneNumber,
-          email,
-          role: userData.role,
-        });
+        setUserData({ ...editedUser, role: userData.role });
         setIsEditing(false);
-        console.log("update success");
+        console.log("Profile updated successfully");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
     }
   };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+  const handleEditClick = () => setIsEditing(true);
 
-  const handlePasswordChangeClick = () => {
-    setIsPasswordModalOpen(true);
-  };
+  const handlePasswordChangeClick = () => setIsPasswordModalOpen(true);
 
-  const { email, role, firstName, lastName, address, phoneNumber } =
-    userData || {};
+  const { email, role, firstName, lastName, address, phoneNumber } = userData || {};
 
   if (!userData) {
     return <div>Loading...</div>;
@@ -82,9 +64,7 @@ const Profile = () => {
             {!isEditing ? (
               <div className="item">
                 <div className="details">
-                  <h1 className="itemTitle">{`${firstName || "No name"} ${
-                    lastName || ""
-                  }`}</h1>
+                  <h1 className="itemTitle">{`${firstName || "No name"} ${lastName || ""}`}</h1>
                   <div className="detailItem">
                     <span className="itemKey">Role:</span>
                     <span className="itemValue">{role}</span>
@@ -93,11 +73,6 @@ const Profile = () => {
                     <span className="itemKey">Email:</span>
                     <span className="itemValue">{email}</span>
                   </div>
-                  <div className="detailItem">
-                    <span className="itemKey">Address:</span>
-                    <span className="itemValue">{address}</span>
-                  </div>
-                  
                   <div className="detailItem">
                     <span className="itemKey">Contact:</span>
                     <span className="itemValue">{phoneNumber}</span>
@@ -112,7 +87,7 @@ const Profile = () => {
                 onSave={handleSaveClick}
               />
             )}
-            <PasswordChangeModal
+            <PasswordChangeModal token={authToken}
               isOpen={isPasswordModalOpen}
               onClose={() => setIsPasswordModalOpen(false)}
             />
@@ -121,9 +96,7 @@ const Profile = () => {
             <div className="editBtn" onClick={handleEditClick}>
               Update Profile
             </div>
-            <div
-              className="passwordChangeBtn"
-              onClick={handlePasswordChangeClick}>
+            <div className="passwordChangeBtn" onClick={handlePasswordChangeClick}>
               Change Password
             </div>
           </div>
@@ -147,7 +120,7 @@ const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} className="modal">
+    <Modal isOpen={isOpen} onRequestClose={onClose} className="modal" overlayClassName="overlay">
       <h2>Edit Profile</h2>
       <form onSubmit={handleSubmit}>
         <label>
@@ -206,10 +179,8 @@ const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
           />
         </label>
         <div className="btns">
-          <button type="submit">Save profile</button>
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
+          <button type="submit" className="saveBtn">Save Profile</button>
+          <button type="button" className="cancelBtn" onClick={onClose}>Cancel</button>
         </div>
       </form>
     </Modal>

@@ -3,12 +3,27 @@ import {
   AreaChart,
   Area,
   XAxis,
+  YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
 
 const Chart = ({ aspect, title, data }) => {
+  const getColorByValue = (value) => {
+    if (value < 100) return "#FF4500"; // Orangered
+    if (value >= 100 && value < 1000) return "#FFD700"; // Lemon
+    return "#32CD32"; // Green
+  };
+
+  const renderCustomizedDot = (props) => {
+    const { cx, cy, value } = props;
+    const color = getColorByValue(value);
+    return (
+      <circle cx={cx} cy={cy} r={5} stroke={color} strokeWidth={2} fill={color} />
+    );
+  };
+
   return (
     <div className="chart">
       <div className="title">{title}</div>
@@ -26,6 +41,10 @@ const Chart = ({ aspect, title, data }) => {
             </linearGradient>
           </defs>
           <XAxis dataKey="name" />
+          <YAxis
+            tickFormatter={(tick) => tick / 1000}
+            ticks={[0, 1000, 2000, 3000]} // Adjust ticks as needed
+          />
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip />
           <Area
@@ -34,6 +53,7 @@ const Chart = ({ aspect, title, data }) => {
             stroke="#82ca9d"
             fillOpacity={1}
             fill="url(#colorPv)"
+            dot={renderCustomizedDot}
           />
         </AreaChart>
       </ResponsiveContainer>

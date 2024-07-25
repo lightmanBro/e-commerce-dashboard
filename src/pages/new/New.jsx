@@ -24,17 +24,25 @@ const New = ({ inputs, title }) => {
   const [newCategory, setNewCategory] = useState("");
   const [newSubcategory, setNewSubcategory] = useState("");
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
-  const token = Cookies.get('token');
+  const [token, setToken] = useState(Cookies.get('token'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
+  useEffect(() => {
+    const storedToken = Cookies.get('token');
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    setToken(storedToken);
+    setUser(storedUser);
 
-    if (token) {
-    } else {
+    if (!storedToken) {
       navigate("/login");
+    } else {
+      fetchClassData();
     }
-    
-    
+  }, [navigate]);
+
   const fetchClassData = async () => {
+    if (!token) return;
+
     try {
       const res = await axios.get("http://127.0.0.1:4000/get-class-data", {
         headers: { Authorization: `Bearer ${token}` },
@@ -45,10 +53,9 @@ const New = ({ inputs, title }) => {
       setSubcategories(subCategory);
     } catch (error) {
       console.error("Error fetching class data:", error);
+      // Optionally handle errors such as invalid tokens
     }
   };
-  fetchClassData()
-  
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     maxFiles: 5,
@@ -176,34 +183,29 @@ const New = ({ inputs, title }) => {
 
   const handleDeleteItem = async () => {
     const { item, type } = modal.data;
-  
-    let endpoint = "";
-    if (type === "category") {
-      endpoint = `http://127.0.0.1:4000/delete-class-data`;
-    } else if (type === "subcategory") {
-      endpoint = `http://127.0.0.1:4000/delete-class-data`;
-    }
-  
+
     try {
-      const response = await axios.delete(endpoint, {
-        headers: { Authorization: `Bearer ${token}` },
-        data: { type, title: item } // Send the data in the body of the request
-      });
-  
-      if (response.status === 200) {
-        if (type === "category") {
-          setCategories(categories.filter((category) => category !== item));
-        } else if (type === "subcategory") {
-          setSubcategories(subcategories.filter((subcategory) => subcategory !== item));
+        const response = await axios.delete("http://127.0.0.1:4000/delete-class-data", {
+            headers: { Authorization: `Bearer ${token}` },
+            data: { type, title: item } // Send the data in the body of the request
+        });
+
+        if (response.status === 200) {
+            if (type === "category") {
+                setCategories(categories.filter((category) => category !== item));
+            } else if (type === "subcategory") {
+                setSubcategories(subcategories.filter((subcategory) => subcategory !== item));
+            }
+
+            setSuccessMessage(`${type.slice(0, -1)} deleted successfully!`);
+            setModal({ ...modal, show: false });
         }
-  
-        setSuccessMessage(`${type.slice(0, -1)} deleted successfully!`);
-        setModal({ ...modal, show: false });
-      }
     } catch (error) {
-      console.error(`Error deleting ${type}:`, error);
+      closeModal()
+        console.error(`Error deleting ${type}:`, error);
     }
-  };
+};
+
   
   const closeModal = () => {
     setModal({ ...modal, show: false });

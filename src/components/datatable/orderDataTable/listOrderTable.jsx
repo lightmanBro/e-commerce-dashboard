@@ -37,11 +37,12 @@ const Orders = () => {
           customerId: order.customer._id,
           customer: `${order.customer.firstName || ""} ${order.customer.lastName || ""}`,
           email: order.customer.email,
-          orderDate: new Date(order.orderDate).toLocaleDateString(),
+          status:order.status,
+          orderDate: new Date(order.orderDate), // Use Date object
           totalAmount: order.totalAmount,
           items: order.items.length,
         }));
-
+        console.log(response.data)
         setOrders(formattedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -70,11 +71,13 @@ const Orders = () => {
       ),
     },
     { field: 'email', headerName: 'Customer Mail', width: 150 },
+    {field:'status',headerName:'Order Status',width:150},
     {
       field: 'orderDate',
       headerName: 'Order Date',
       width: 200,
       type: 'date',
+      valueGetter: (params) => params // Ensure Date object is used
     },
     {
       field: 'totalAmount',

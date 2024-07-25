@@ -121,23 +121,26 @@ const ListProductDatatable = () => {
   };
 
   const handleDeleteConfirm = async () => {
+    console.log(deleteProductId);
     try {
-      await axios.delete(
-        `http://127.0.0.1:4000/product/delete/${deleteProductId}`, // Fixed URL formatting
+      const response = await axios.delete(
+        `http://127.0.0.1:4000/product/${deleteProductId}`, 
         {
           headers: { Authorization: `Bearer ${authToken}` },
         }
       );
+      console.log(response.data);
       setRows((prevRows) =>
         prevRows.filter((row) => row.id !== deleteProductId)
       );
       setShowDeleteModal(false);
       alert("Product deleted successfully");
     } catch (error) {
-      console.error("Error deleting product", error);
+      console.error(error);
       alert("Failed to delete product. Please try again.");
     }
   };
+  
 
   const handleDeleteCancel = () => {
     setShowDeleteModal(false);

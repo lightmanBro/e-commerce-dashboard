@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // import Widget from "../../components/widget/Widget";
 import { useAuth } from "../../context/AuthContext";
+import Cookies from 'js-cookie'
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Chart from "../../components/chart/Chart";
@@ -32,14 +33,17 @@ const Statistics = () => {
     monthlySummary: { ...initialSummaryState },
   });
   const navigate = useNavigate();
-  const {user,token}= useAuth();
+ 
+  const [authToken, setAuthToken] = useState(Cookies.get('token'));
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
+  console.log(authToken)
   useEffect(() => {
     const fetchData = async (period) => {
       try {
         const response = await axios.get(
           `http://127.0.0.1:4000/activities/aggregates?period=${period}`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${authToken}` },
           }
         );
         setData((prevData) => ({
@@ -55,7 +59,7 @@ const Statistics = () => {
     fetchData("daily");
     fetchData("weekly");
     fetchData("monthly");
-  }, [token, user, navigate]);
+  }, [authToken]);
 
   const prepareChartData = (summary, key) => {
     return [{ name: key, Total: summary[key] }];
@@ -100,7 +104,7 @@ const Statistics = () => {
     <div className="statistics">
       <Sidebar />
       <div className="stats">
-        <Navbar user={user} />
+        <Navbar user={userData} />
         <div className="top">
           <div className="stats-btn-group">
             <div className="stats-btn" onClick={setStatsType}>

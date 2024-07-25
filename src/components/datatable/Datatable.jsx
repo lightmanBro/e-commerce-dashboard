@@ -6,7 +6,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import "./Datatable.scss"; // Assuming you have defined your styles here
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
   {
     field: "firstName",
     headerName: "Name",
@@ -20,7 +19,16 @@ const columns = [
   },
   { field: "email", headerName: "User Email", width: 230 },
   { field: "role", headerName: "User Role", width: 230 },
-  { field: "lastLogin", headerName: "Last Login", type: "date", width: 190 },
+  {
+    field: "lastLogin",
+    headerName: "Last Login",
+    type: "date",
+    width: 190,
+    valueGetter: (params) => new Date(params), // Ensure value is a Date object
+    renderCell: (params) => (
+      <div>{params.value ? new Date(params.value).toLocaleDateString() : "N/A"}</div> // Display formatted date
+    ),
+  },
 ];
 
 const Datatable = () => {
@@ -49,13 +57,13 @@ const Datatable = () => {
           const response = await axios.get("http://127.0.0.1:4000/users/all", {
             headers: { Authorization: `Bearer ${authToken}` },
           });
-
+          console.log(response.data);
           const formattedRows = response.data.map((user) => ({
             id: user._id,
             firstName: user.firstName,
             email: user.email,
             role: user.role,
-            lastLogin: new Date(user.lastLoginDate).toLocaleDateString() || "yet to"
+            lastLogin: user.lastLoginDate, // Use ISO date string
           }));
 
           setRows(formattedRows);

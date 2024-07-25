@@ -116,3 +116,39 @@
     }
   }
 }
+
+/* Modal styles */
+.ReactModal__Overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ReactModal__Content {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: white;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+/* Button styles */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #d6d6d6;
+  cursor: not-allowed;
+}

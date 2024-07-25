@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import Modal from "react-modal";
 import axios from "axios";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { useAuth } from "../../../context/AuthContext";
+import Cookies from 'js-cookie'
 import "./Order.scss";
 import Sidebar from "../../../components/sidebar/Sidebar";
 import Navbar from "../../../components/navbar/Navbar";
 
 const OrderProcessingPage = () => {
+  const [authToken, setAuthToken] = useState(Cookies.get('token')); // Get token from cookies
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user'))); // Get user from local storage
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeliveryFields, setShowDeliveryFields] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState("");
   const [deliveryType, setDeliveryType] = useState("hours");
-  const { token, user } = useAuth();
+  
 
   useEffect(() => {
+    setAuthToken(Cookies.get('token')); // Update token from cookies
+    setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
     fetchOrderDetails(orderId);
   }, [orderId,]);
 
   const fetchOrderDetails = async (orderId) => {
     try {
       const response = await axios.get(`http://127.0.0.1:4000/order/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       const data = await response.data;
 
@@ -91,7 +97,7 @@ const OrderProcessingPage = () => {
         `http://127.0.0.1:4000/orders/${orderId}/status`,
         { status: newStatus, deliveryTime, deliveryType },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${authToken}` },
         }
       );
       const data = await response.data;
@@ -109,7 +115,7 @@ const OrderProcessingPage = () => {
     console.log(itemId);
     try {
       const response = await axios.put(`http://127.0.0.1:4000/order-item/${orderId}/${itemId}/${newItemStatus}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.data.message) {
         setOrder((prevOrder) => ({
@@ -138,7 +144,7 @@ const OrderProcessingPage = () => {
     <div className="order">
       <Sidebar />
       <div className="orderContainer">
-        <Navbar user={user} />
+        <Navbar user={userData} />
         <h1>Order Processing</h1>
         <div className="processContainer">
           <div className="top">
@@ -175,9 +181,10 @@ const OrderProcessingPage = () => {
           <div className="bottom">
             <PaymentInfo paymentStatus={order.paymentStatus} paymentMethod={order.paymentMethod} />
             <div className="address">
-              <h1>Delivery Address:</h1>
-              {order.deliveryAddress}
-            </div>
+  <h1>Delivery Address:</h1>
+  {order.deliveryAddress}
+</div>
+
             <TrackingInfo trackingNumber={order.trackingNumber} />
           </div>
         </div>
@@ -270,6 +277,7 @@ const TrackingInfo = ({ trackingNumber }) => (
   </div>
 );
 
+
 const OrderStatus = ({
   status,
   updateStatus,
@@ -279,32 +287,101 @@ const OrderStatus = ({
   setDeliveryTime,
   deliveryType,
   setDeliveryType,
-}) => (
-  <div>
-    <h2>Order Status</h2>
-    <p>Status: {status}</p>
-    <div>
-      <button variant="contained" onClick={() => updateStatus("shipped")}>Mark as Shipped</button>
-      <button variant="contained" onClick={() => updateStatus("delivered")}>Mark as Delivered</button>
-    </div>
-    {showDeliveryFields && (
-      <div>
+  orderId,
+  token
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handleUpdateStatus = (newStatus) => {
+    if (newStatus === "shipped") {
+      setShowDeliveryFields(true);
+    } else {
+      updateStatus(newStatus);
+      setModalMessage(`Order status changed to ${newStatus}`);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleSaveDeliveryDetails = () => {
+    if (deliveryTime && deliveryType) {
+      updateStatus("shipped");
+      setModalMessage("Order status changed to shipped");
+      setIsModalOpen(true);
+      setShowDeliveryFields(false);
+    } else {
+      alert("Please select delivery type and time.");
+    }
+  };
+
+  const renderDeliveryTimeInput = () => {
+    if (deliveryType === "hours") {
+      return (
+        <select
+          value={deliveryTime}
+          onChange={(e) => setDeliveryTime(e.target.value)}
+        >
+          {Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
+            <option key={hour} value={hour}>
+              {hour} {hour === 1 ? "hour" : "hours"}
+            </option>
+          ))}
+        </select>
+      );
+    } else if (deliveryType === "days") {
+      return (
         <input
-          type="text"
-          placeholder="Delivery Time"
+          type="date"
           value={deliveryTime}
           onChange={(e) => setDeliveryTime(e.target.value)}
         />
-        <select
-          value={deliveryType}
-          onChange={(e) => setDeliveryType(e.target.value)}
-        >
-          <option value="hours">Hours</option>
-          <option value="days">Days</option>
-        </select>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div>
+      <h2>Order Status</h2>
+      <p>Status: {status}</p>
+      <div>
+        {status !== "shipped" && (
+          <button variant="contained" onClick={() => handleUpdateStatus("shipped")}>
+            Mark as Shipped
+          </button>
+        )}
+        <button variant="contained" onClick={() => handleUpdateStatus("delivered")}>
+          Mark as Delivered
+        </button>
       </div>
-    )}
-  </div>
-);
+      {showDeliveryFields && (
+        <div>
+          <select
+            value={deliveryType}
+            onChange={(e) => setDeliveryType(e.target.value)}
+          >
+            <option value="">Select Delivery Type</option>
+            <option value="hours">Hours</option>
+            <option value="days">Days</option>
+          </select>
+          {renderDeliveryTimeInput()}
+          <button onClick={handleSaveDeliveryDetails}>Save Delivery Details</button>
+        </div>
+      )}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel="Status Change Modal"
+        ariaHideApp={false}
+      >
+        <h2>Status Change</h2>
+        <p>{modalMessage}</p>
+        <button onClick={() => setIsModalOpen(false)}>Close</button>
+      </Modal>
+    </div>
+  );
+};
+
+
 
 export default OrderProcessingPage;

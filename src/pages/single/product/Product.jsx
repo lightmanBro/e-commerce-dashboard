@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/sidebar/Sidebar";
+import { useDropzone } from 'react-dropzone';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../../components/navbar/Navbar";
-import { Gauge } from "@mui/x-charts/Gauge";
-import Chart from "../../../components/chart/Chart";
+import Cookies from 'js-cookie';
 import Modal from "react-modal";
 import DatePicker from "react-datepicker";
-import { useAuth } from "../../../context/AuthContext";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import "./Product.scss";
@@ -21,84 +20,98 @@ const Product = () => {
   const [stock, setStock] = useState(null);
   const [available, setAvailable] = useState(null);
   const [rating, setRating] = useState(null);
-  const [reviews, setReviews] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [discountExpiry, setDiscountExpiry] = useState(new Date());
   const navigate = useNavigate();
-  const { user, token } = useAuth();
+  const [authToken, setAuthToken] = useState(Cookies.get('token'));
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
 
   useEffect(() => {
-    // Fetch product using productId
-    axios
-      .get(`http://127.0.0.1:4000/product/${productId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(`http://127.0.0.1:4000/product/${productId}`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
         const { product, prices } = res.data;
-        console.log(product);
-        setStock(product.stock);
-        setAvailable(product.available);
         setProduct(product);
         setPrice(prices);
-      })
-      .catch((error) => {
+        setStock(product.stock);
+        setAvailable(product.available);
+      } catch (error) {
         console.error("Error fetching product:", error);
-      });
-    const getReview = async () => {
-      const response = await axios.get(
-        `http://127.0.0.1:4000/product/review/${productId}`
-      );
-      setReviews(response.data);
+      }
     };
 
-    getReview();
-  }, [productId, token]);
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:4000/product/review/${productId}`);
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+    fetchProduct();
+    fetchReviews();
+  }, [productId, authToken]);
 
-  const handleSaveClick = (event, editedProduct) => {
+  const handleEditClick = () => setIsEditing(true);
+
+  const handleSaveClick = async (event, editedProduct, files) => {
     event.preventDefault();
-    // Save the updated product data
-    axios
-      .put(`http://127.0.0.1:4000/update-item/${productId}`, editedProduct)
-      .then(() => {
-        setProduct(editedProduct); // Update the local product state
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        console.error("Error saving product:", error);
+  
+    const formData = new FormData();
+    formData.append('productTitle', editedProduct.productTitle);
+    formData.append('price', editedProduct.price);
+    formData.append('shortDesc', editedProduct.shortDesc);
+    formData.append('additionalInfo', editedProduct.additionalInfo);
+    formData.append('specification', editedProduct.specification);
+    formData.append('status', editedProduct.status);
+    formData.append('scheduledDate', editedProduct.scheduledDate);
+    formData.append('files', files);
+  
+    try {
+      console.log({...formData.entries()})
+      await axios.patch(`http://127.0.0.1:4000/update-item/${productId}`, formData, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        },
       });
+      setProduct(editedProduct); // Update the local product state
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving product:", error);
+    }
   };
+  
 
-  const handleDiscountSave = () => {
-    axios
-      .post(
+  const handleDiscountSave = async () => {
+    try {
+      const res = await axios.post(
         `http://127.0.0.1:4000/product/${productId}/discount`,
         { discount, discountOfferExpires: discountExpiry },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        setProduct(res.data.product);
-        setIsDiscountModalOpen(false);
-      })
-      .catch((error) => {
-        console.error("Error saving discount:", error);
-      });
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+      setProduct(res.data.product);
+      setIsDiscountModalOpen(false);
+    } catch (error) {
+      console.error("Error saving discount:", error);
+    }
   };
 
   if (!product) {
     return <div>Loading...</div>;
   }
 
+
   return (
     <div className="single">
       <Sidebar />
       <div className="singleContainer">
-        <Navbar user={user} />
+        <Navbar user={userData} />
         <div className="top">
           <div className="left">
             <div className="editBtn" onClick={handleEditClick}>
@@ -236,9 +249,8 @@ const Product = () => {
 const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
   const [editedProduct, setEditedProduct] = useState({
     ...product,
-    scheduledDate: product.scheduledDate
-      ? new Date(product.scheduledDate)
-      : new Date(),
+    scheduledDate: product.scheduledDate ? new Date(product.scheduledDate) : new Date(),
+    files: [], // to hold the dropped files
   });
 
   const handleChange = (e) => {
@@ -257,6 +269,20 @@ const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
     event.preventDefault();
     onSave(event, editedProduct); // Pass the updated product state
   };
+
+  const handleDrop = (acceptedFiles) => {
+    // Check if files are images
+    const validFiles = acceptedFiles.filter(file => file.type.startsWith('image/'));
+    setEditedProduct((prevProduct) => ({
+      ...prevProduct,
+      files: validFiles,
+    }));
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: handleDrop,
+    accept: 'image/*', // Accept only images
+  });
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} className="modal">
@@ -280,31 +306,37 @@ const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
             onChange={handleChange}
           />
         </label>
-        Short Description
-        <textarea
-          name="shortDesc"
-          value={editedProduct.shortDesc}
-          onChange={handleChange}></textarea>
-        <label></label>
-        Additional Info
-        <textarea
-          name="additionalInfo"
-          value={editedProduct.additionalInfo}
-          onChange={handleChange}></textarea>
-        <label></label>
-        Specification
-        <textarea
-          name="specification"
-          value={editedProduct.specification}
-          onChange={handleChange}></textarea>
-        <label></label>
-        {/* Add other product fields */}
+        <label>
+          Short Description:
+          <textarea
+            name="shortDesc"
+            value={editedProduct.shortDesc}
+            onChange={handleChange}
+          ></textarea>
+        </label>
+        <label>
+          Additional Info:
+          <textarea
+            name="additionalInfo"
+            value={editedProduct.additionalInfo}
+            onChange={handleChange}
+          ></textarea>
+        </label>
+        <label>
+          Specification:
+          <textarea
+            name="specification"
+            value={editedProduct.specification}
+            onChange={handleChange}
+          ></textarea>
+        </label>
         <label>
           Status:
           <select
             name="status"
             value={editedProduct.status}
-            onChange={handleChange}>
+            onChange={handleChange}
+          >
             <option value="draft">Draft</option>
             <option value="published">Published</option>
             <option value="schedule">Scheduled</option>
@@ -323,14 +355,31 @@ const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
             />
           </label>
         )}
+
+        <div {...getRootProps({ className: 'dropzone' })}>
+          <input {...getInputProps()} />
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        </div>
+
+        <div className="preview">
+          {editedProduct.files.map((file, index) => (
+            <img
+              key={index}
+              src={URL.createObjectURL(file)}
+              alt={`Preview ${index + 1}`}
+              className="preview-image"
+            />
+          ))}
+        </div>
+
         <button type="submit">Save</button>
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
+        <button type="button" onClick={onClose}>Cancel</button>
       </form>
     </Modal>
   );
 };
+
+
 
 const DiscountModal = ({
   isOpen,
