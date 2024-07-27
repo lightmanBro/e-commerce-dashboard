@@ -22,75 +22,77 @@ const OrderProcessingPage = () => {
   useEffect(() => {
     setAuthToken(Cookies.get('token')); // Update token from cookies
     setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
-    fetchOrderDetails(orderId);
-    
-  }, []);
-
-  const fetchOrderDetails = async (orderId) => {
-    try {
-      const response = await axios.get(`https://api.citratechsolar.com/order/${orderId}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      const data = await response.data;
-
-      setOrder({
-        id: data.id || "N/A",
-        customerName: `${data.customer.firstName} ${data.customer.lastName}` || "N/A",
-        items: data.items.length ? data.items : [
-          {
-            id: 1,
-            name: "Wireless Headphones",
-            quantity: 2,
-            price: 99.99,
-            status: "ship",
-          },
-          {
-            id: 2,
-            name: "Smartphone",
-            quantity: 1,
-            price: 699.99,
-            status: "unship",
-          },
-        ],
-        paymentStatus: data.paid || "N/A",
-        paymentMethod: data.paymentType || "N/A",
-        status: data.status || "N/A",
-        trackingNumber: data.orderId || "N/A",
-        email: data.customer.email,
-        deliveryAddress: data.deliveryAddress || "N/A",
-      });
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to fetch order details", error);
-      setOrder({
-        id: "N/A",
-        customerName: "N/A",
-        items: [
-          {
-            id: 1,
-            name: "Wireless Headphones",
-            quantity: 2,
-            price: 99.99,
-            status: "ship",
-          },
-          {
-            id: 2,
-            name: "Smartphone",
-            quantity: 1,
-            price: 699.99,
-            status: "unship",
-          },
-        ],
-        paymentStatus: "N/A",
-        paymentMethod: "N/A",
-        status: "N/A",
-        trackingNumber: "N/A",
-        deliveryAddress: "N/A",
-      });
-      setLoading(false);
+  
+    const fetchOrderDetails = async (orderId) => {
+      try {
+        const response = await axios.get(`https://api.citratechsolar.com/order/${orderId}`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        const data = await response.data;
+  
+        setOrder({
+          id: data.id || "N/A",
+          customerName: `${data.customer.firstName} ${data.customer.lastName}` || "N/A",
+          items: data.items.length ? data.items : [
+            {
+              id: 1,
+              name: "Wireless Headphones",
+              quantity: 2,
+              price: 99.99,
+              status: "ship",
+            },
+            {
+              id: 2,
+              name: "Smartphone",
+              quantity: 1,
+              price: 699.99,
+              status: "unship",
+            },
+          ],
+          paymentStatus: data.paid || "N/A",
+          paymentMethod: data.paymentType || "N/A",
+          status: data.status || "N/A",
+          trackingNumber: data.orderId || "N/A",
+          email: data.customer.email,
+          deliveryAddress: data.deliveryAddress || "N/A",
+        });
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch order details", error);
+        setOrder({
+          id: "N/A",
+          customerName: "N/A",
+          items: [
+            {
+              id: 1,
+              name: "Wireless Headphones",
+              quantity: 2,
+              price: 99.99,
+              status: "ship",
+            },
+            {
+              id: 2,
+              name: "Smartphone",
+              quantity: 1,
+              price: 699.99,
+              status: "unship",
+            },
+          ],
+          paymentStatus: "N/A",
+          paymentMethod: "N/A",
+          status: "N/A",
+          trackingNumber: "N/A",
+          deliveryAddress: "N/A",
+        });
+        setLoading(false);
+      }
+    };
+  
+    if (orderId) {
+      fetchOrderDetails(orderId);
     }
-  };
-
+  }, [orderId]);
+  
   const handleUpdateStatus = async (newStatus) => {
     try {
       const response = await axios.patch(
