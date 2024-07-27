@@ -18,7 +18,6 @@ import "./Sidebar.scss";
 
 const Sidebar = ({ active }) => {
   const [user, setUser] = useState(null);
-  const token = Cookies.get("authToken"); // Get token from cookies
   const navigate = useNavigate();
 
   useEffect(() => {

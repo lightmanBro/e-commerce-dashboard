@@ -32,7 +32,7 @@ const columns = [
 ];
 
 const Datatable = () => {
-  const [userData, setUserData] = useState(null);
+  
   const [authToken, setToken] = useState(null);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,6 @@ const Datatable = () => {
 
     if (token) {
       setToken(token);
-      setUserData(user);
     } else {
       navigate("/login");
     }

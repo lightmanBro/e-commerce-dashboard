@@ -15,8 +15,6 @@ const Single = () => {
   const { userId } = useParams();
   const [siteUser, setSiteUser] = useState({});
   const [orders, setOrders] = useState([]);
-  const navigate = useNavigate();
-  const { user, token } = useAuth();
 
   useEffect(() => {
     setAuthToken(Cookies.get('token'));
@@ -32,7 +30,7 @@ const Single = () => {
       }
     };
     fetchSiteUser();
-  }, [userId]);
+  }, []);
 
   return (
     <div className="single">

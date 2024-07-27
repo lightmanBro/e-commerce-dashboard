@@ -4,12 +4,10 @@ import "./style/dark.scss";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Home from "./pages/home/Home";
-import Login from "./pages/login/login"; // Correct capitalization of import
 import List from "./pages/list/List";
 import Single from "./pages/single/Single";
 import New from "./pages/new/New";
 import { productsInputsm, userInputs } from "./formSource";
-import { useContext } from "react";
 import Product from "./pages/single/product/Product";
 import OrderProcessingPage from "./pages/single/order/Order";
 import Orders from "./components/datatable/orderDataTable/listOrderTable";

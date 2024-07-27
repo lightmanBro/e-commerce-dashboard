@@ -1,16 +1,13 @@
-import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import FullScreenExitOutlinedIcon from '@mui/icons-material/FullscreenExitOutlined';
 import NotificationNoneOutlinedIcon from '@mui/icons-material/NotificationsNone';
 import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatBubbleOutline';
 import ListOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import './Navbar.scss';
 
 const Navbar = ({ user }) => {
-  const navigate = useNavigate();
 //   useEffect(() => {
 //     if (!user) {
 //       navigate('/login');

@@ -79,7 +79,6 @@ const SalesPage = () => {
       }
       console.log(userData);
       // Prepare data for the POST request
-      const salesperson = userData._id; // Replace with actual salesperson data
       const salesType = "shop"; // Assuming this is fixed for shop sales
       const totalAmount = totalPrice;
       const itemsSold = selectedItems.map((item) => ({

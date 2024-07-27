@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // import Widget from "../../components/widget/Widget";
-import { useAuth } from "../../context/AuthContext";
 import Cookies from 'js-cookie'
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -32,10 +31,9 @@ const Statistics = () => {
     weeklySummary: { ...initialSummaryState },
     monthlySummary: { ...initialSummaryState },
   });
-  const navigate = useNavigate();
  
-  const [authToken, setAuthToken] = useState(Cookies.get('token'));
-  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
+  const authToken =Cookies.get('token')
+  const userData =JSON.parse(localStorage.getItem('user'))
   console.log(authToken)
   useEffect(() => {
     const fetchData = async (period) => {

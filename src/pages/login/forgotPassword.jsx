@@ -26,7 +26,7 @@ const ResetPassword = () => {
       return;
     }
     try {
-      const response = await axios.post(`https://api.citratechsolar.com/reset-password/${token}`, { password }, {
+       await axios.post(`https://api.citratechsolar.com/reset-password/${token}`, { password }, {
         headers: {
           'Authorization': `Bearer ${Cookies.get('authToken')}`, // Include token in headers if needed
         },

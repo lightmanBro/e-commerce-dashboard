@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import { useAuth } from "../../context/AuthContext";
 import "./New.scss";
 
 const New = ({ inputs, title }) => {
  
   const [formData, setFormData] = useState({});
-  const [file, setFile] = useState(null);
   const [files, setFiles] = useState([]);
   const [itemStatus, setItemStatus] = useState("draft");
   const [publishDate, setPublishDate] = useState("");
@@ -32,30 +30,30 @@ const New = ({ inputs, title }) => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     setToken(storedToken);
     setUser(storedUser);
-
+    const fetchClassData = async () => {
+      if (!token) return;
+  
+      try {
+        const res = await axios.get("https://api.citratechsolar.com/get-class-data", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const { brand, category, subCategory } = res.data;
+        setBrands(brand);
+        setCategories(category);
+        setSubcategories(subCategory);
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+        // Optionally handle errors such as invalid tokens
+      }
+    };
     if (!storedToken) {
       navigate("/login");
     } else {
       fetchClassData();
     }
-  }, [navigate]);
+  }, []);
 
-  const fetchClassData = async () => {
-    if (!token) return;
-
-    try {
-      const res = await axios.get("https://api.citratechsolar.com/get-class-data", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const { brand, category, subCategory } = res.data;
-      setBrands(brand);
-      setCategories(category);
-      setSubcategories(subCategory);
-    } catch (error) {
-      console.error("Error fetching class data:", error);
-      // Optionally handle errors such as invalid tokens
-    }
-  };
+  
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
     maxFiles: 5,

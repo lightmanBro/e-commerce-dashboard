@@ -14,7 +14,6 @@ import Cookies from 'js-cookie';
 const Home = () => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [orderData, setOrderData] = useState([]);
   const [salesData, setSalesData] = useState([]);
   const [summaryData, setSummaryData] = useState({});
   const [totalAmount, setTotalAmount] = useState(0);

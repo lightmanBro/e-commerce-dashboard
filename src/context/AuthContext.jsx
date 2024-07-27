@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [user, setUser] = useState();
   const [token, setToken] = useState(Cookies.get('token'));
   const [loading, setLoading] = useState(true);
 
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ loading, loginUser, logoutUser, registerAdmin }}>
+    <AuthContext.Provider value={{user, loading, loginUser, logoutUser, registerAdmin }}>
       {children}
     </AuthContext.Provider>
   );

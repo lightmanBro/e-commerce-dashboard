@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import Cookies from 'js-cookie'
 import "./PasswordChangeModal.scss";
 
 const PasswordChangeModal = ({token, isOpen, onClose }) => {
@@ -22,7 +20,7 @@ const PasswordChangeModal = ({token, isOpen, onClose }) => {
     }
 
     try {
-      const response = await axios.patch(
+      await axios.patch(
         "https://api.citratechsolar.com/user/password-reset",
         { oldPassword: currentPassword, newPassword },
         {

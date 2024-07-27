@@ -50,7 +50,7 @@ const Auth = () => {
       return;
     }
     try {
-      const response = await axios.post(`https://api.citratechsolar.com/reset-password/${token}`, { password });
+       await axios.post(`https://api.citratechsolar.com/reset-password/${token}`, { password });
       setMessage("Password reset successful");
       setError("");
       setTimeout(() => navigate("/login"), 3000);

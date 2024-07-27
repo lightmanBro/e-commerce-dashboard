@@ -15,7 +15,6 @@ const Profile = () => {
   const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
       setAuthToken(authToken);
@@ -47,7 +46,7 @@ const Profile = () => {
 
   const handlePasswordChangeClick = () => setIsPasswordModalOpen(true);
 
-  const { email, role, firstName, lastName, address, phoneNumber } = userData || {};
+  const { email, role, firstName, lastName, phoneNumber } = userData || {};
 
   if (!userData) {
     return <div>Loading...</div>;

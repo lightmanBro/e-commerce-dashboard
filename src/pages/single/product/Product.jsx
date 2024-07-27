@@ -17,17 +17,13 @@ const Product = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [price, setPrice] = useState(null);
-  const [stock, setStock] = useState(null);
-  const [available, setAvailable] = useState(null);
-  const [rating, setRating] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [discountExpiry, setDiscountExpiry] = useState(new Date());
-  const navigate = useNavigate();
-  const [authToken, setAuthToken] = useState(Cookies.get('token'));
-  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
+  const authToken=Cookies.get('token')
+  const userData = JSON.parse(localStorage.getItem('user'))
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,8 +34,6 @@ const Product = () => {
         const { product, prices } = res.data;
         setProduct(product);
         setPrice(prices);
-        setStock(product.stock);
-        setAvailable(product.available);
       } catch (error) {
         console.error("Error fetching product:", error);
       }

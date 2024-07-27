@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Modal from "react-modal";
 import axios from "axios";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import { useAuth } from "../../../context/AuthContext";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import Cookies from 'js-cookie'
 import "./Order.scss";
 import Sidebar from "../../../components/sidebar/Sidebar";
@@ -24,7 +23,7 @@ const OrderProcessingPage = () => {
     setAuthToken(Cookies.get('token')); // Update token from cookies
     setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
     fetchOrderDetails(orderId);
-  }, [orderId,]);
+  }, []);
 
   const fetchOrderDetails = async (orderId) => {
     try {
