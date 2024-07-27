@@ -39,7 +39,6 @@ const Datatable = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // const user = JSON.parse(localStorage.getItem('user'));
     const token = Cookies.get('token');
 
     if (token) {
