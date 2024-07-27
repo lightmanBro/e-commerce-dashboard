@@ -18,7 +18,6 @@ import Sales from "./components/datatable/salesDataTable/listSalesData";
 import Delivery from "./components/datatable/deliveryDataTable/listDeliveryData";
 import Auth from "./pages/login/login";
 import ResetPassword from "./pages/login/forgotPassword";
-import SingleProductPage from "./solar/singleproduct/SingleProduct";
 // import { DarkModeContext } from "./context/darkModeContext";
 import Receipt from "./components/datatable/receipt/Receipt";
 
@@ -54,7 +53,6 @@ function App() {
           </Route>
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/single/:productId" element={<SingleProductPage />} />
           <Route path="/receipt" element={<Receipt/>}/>
         </Routes>
       </BrowserRouter>
