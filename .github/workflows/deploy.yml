@@ -1,32 +1,33 @@
+name: 🚀 Deploy website on push
+
 on:
   push:
+    branches:
+      - main  # Ensure there is a space after the hyphen
 
-      breanches:
-        -main
-name: 🚀 Deploy website on push
 jobs:
   web-deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Gets latest code
-      uses: actions/checkout@v3
-    
-    -name: use Node.js 18
-    uses: actions/setup-node@v2
-    with:
-      node-version: '16'
-    
-  - name: 🔨 Build Project
-    run:
-      npm install
-      npm run build
+      - name: Gets latest code
+        uses: actions/checkout@v3
+      
+      - name: use Node.js 18
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      
+      - name: 🔨 Build Project
+        run: |
+          npm install
+          npm run build
 
-  -name: sync files
-  uses: SamkirkLand/FTP-Deploy-Action@v4.3.4
-  with:
-      server: ${{ secrets.GIT_CPANEL_REACT_SERVER}}
-      username: ${{ secrets.GIT_CPANEL_REACT_SERVER}}
-      password: ${{ secrets.GIT_CPANEL_REACT_SERVER}}
-      protocol: ${{ secrets.GIT_CPANEL_REACT_SERVER}}
-      local-dir: ./build/
+      - name: sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.GIT_CPANEL_REACT_SERVER }}
+          username: ${{ secrets.GIT_CPANEL_REACT_USERNAME }}
+          password: ${{ secrets.GIT_CPANEL_REACT_PASSWORD }}
+          protocol: ftp
+          local-dir: ./build/
