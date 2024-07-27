@@ -10,27 +10,24 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Gets latest code
+      - name: Get latest code
         uses: actions/checkout@v3
-      
-      - name: use Node.js 16
-        uses: actions/setup-node@v2
+
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
-      
-      - name: Set CI to false
-        run: echo "CI=false" >> $GITHUB_ENV
 
       - name: 🔨 Build Project
         run: |
           npm install
           npm run build
 
-      - name: sync files
+      - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.GIT_CPANEL_REACT_SERVER }}
           username: ${{ secrets.GIT_CPANEL_REACT_USERNAME }}
           password: ${{ secrets.GIT_CPANEL_REACT_PASSWORD }}
-          protocol: ftp
+          protocol: ftp  # Change to 'sftp' if required
           local-dir: ./build/
