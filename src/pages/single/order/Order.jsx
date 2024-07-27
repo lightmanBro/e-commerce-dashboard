@@ -91,7 +91,7 @@ const OrderProcessingPage = () => {
     if (orderId) {
       fetchOrderDetails(orderId);
     }
-  }, [orderId]);
+  }, [authToken,orderId]);
   
   const handleUpdateStatus = async (newStatus) => {
     try {
