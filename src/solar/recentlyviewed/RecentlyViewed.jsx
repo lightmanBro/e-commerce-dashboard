@@ -8,7 +8,7 @@ const RecentlyViewed = () => {
   useEffect(() => {
     const fetchRecentlyViewedItems = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:4000/user/recentlyViewed');
+        const response = await axios.get('https://api.citratechsolar.com/user/recentlyViewed');
         setRecentlyViewedItems(response.data.recentlyViewedItems);
       } catch (error) {
         console.error('Error fetching recently viewed items:', error);
@@ -25,7 +25,7 @@ const RecentlyViewed = () => {
         {recentlyViewedItems.length > 0 ? (
           recentlyViewedItems.map(item => (
             <div key={item._id} className="item">
-              <img src={`http://127.0.0.1:4000/items-media-files/${item.mediaFilesPicture[0]}`} alt={item.productTitle} />
+              <img src={`https://api.citratechsolar.com/items-media-files/${item.mediaFilesPicture[0]}`} alt={item.productTitle} />
               <h3>{item.productTitle}</h3>
               <p>{item.shortDesc}</p>
               <p>Price: {item.price}</p>

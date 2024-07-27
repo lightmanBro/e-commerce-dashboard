@@ -29,7 +29,7 @@ const SalesPage = () => {
           return;
         }
 
-        const response = await axios.get("http://127.0.0.1:4000/products/all", {
+        const response = await axios.get("https://api.citratechsolar.com/products/all", {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setItems(response.data);
@@ -44,6 +44,7 @@ const SalesPage = () => {
 
   const handleAddItem = (item) => {
     setSelectedItems([...selectedItems, { ...item, quantity: 1 }]);
+    updateTotalPrice([...selectedItems, { ...item, quantity: 1 }]);
     setSearchTerm(""); // Clear search term after adding item
     setFilteredItems(items); // Reset filtered items
   };
@@ -76,7 +77,7 @@ const SalesPage = () => {
         navigate("/login"); // Redirect if no user data is found
         return;
       }
-
+      console.log(userData);
       // Prepare data for the POST request
       const salesperson = userData._id; // Replace with actual salesperson data
       const salesType = "shop"; // Assuming this is fixed for shop sales
@@ -88,12 +89,12 @@ const SalesPage = () => {
       }));
 
       // Send POST request to record sale
-      await axios.post("http://127.0.0.1:4000/sale/record", {
-        salesperson,
+      await axios.post("https://api.citratechsolar.com/sale/record", {
+        salesperson:userData._id,
         itemsSold,
         totalAmount,
         salesType,
-      });
+      },{headers:{Authorization:`Bearer ${authToken}`}});
 
       // Update UI to show receipt
       setShowReceipt(true);
@@ -105,7 +106,13 @@ const SalesPage = () => {
   };
 
   const handlePrintReceipt = () => {
+    const printContent = document.getElementById('receiptContainer').innerHTML;
+    const originalContent = document.body.innerHTML;
+
+    document.body.innerHTML = printContent;
     window.print();
+    document.body.innerHTML = originalContent;
+    window.location.reload(); // Reload to restore original content
   };
 
   const handleSearch = (e) => {
@@ -199,7 +206,7 @@ const SalesPage = () => {
             <button onClick={handleCompleteSale}>Complete Sale</button>
           </div>
           {showReceipt && (
-            <div className="receiptContainer">
+            <div className="receiptContainer" id="receiptContainer">
               <Receipt items={selectedItems} totalPrice={totalPrice} />
               <button onClick={handlePrintReceipt}>Print Receipt</button>
             </div>

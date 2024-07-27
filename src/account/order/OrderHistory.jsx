@@ -7,7 +7,7 @@ export default function OrderHistory() {
     const fetchOrderHistory = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:4000/orders/user/${"66705146dafa4dd0270f2734"}`
+          `https://api.citratechsolar.com/orders/user/${"66705146dafa4dd0270f2734"}`
         );
         setHistory(response.data)
         console.log(response.data)

@@ -41,7 +41,7 @@ const Statistics = () => {
     const fetchData = async (period) => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:4000/activities/aggregates?period=${period}`,
+          `https://api.citratechsolar.com/activities/aggregates?period=${period}`,
           {
             headers: { Authorization: `Bearer ${authToken}` },
           }

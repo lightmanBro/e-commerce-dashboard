@@ -21,7 +21,7 @@ const ProductImage = ({ imageUrls, discount }) => {
       <Slider {...settings} className='slider'>
         {uniqueImageUrls.map((url, index) => (
           <div key={index} className="image-container">
-            <img src={`http://127.0.0.1:4000/item-media-files/${url}`} alt={`Product ${index}`} />
+            <img src={`https://api.citratechsolar.com/item-media-files/${url}`} alt={`Product ${index}`} />
           </div>
         ))}
       </Slider>

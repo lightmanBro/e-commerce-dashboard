@@ -32,7 +32,7 @@ const Product = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:4000/product/${productId}`, {
+        const res = await axios.get(`https://api.citratechsolar.com/product/${productId}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         const { product, prices } = res.data;
@@ -47,7 +47,7 @@ const Product = () => {
 
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:4000/product/review/${productId}`);
+        const response = await axios.get(`https://api.citratechsolar.com/product/review/${productId}`);
         setReviews(response.data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
@@ -75,7 +75,7 @@ const Product = () => {
   
     try {
       console.log({...formData.entries()})
-      await axios.patch(`http://127.0.0.1:4000/update-item/${productId}`, formData, {
+      await axios.patch(`https://api.citratechsolar.com/update-item/${productId}`, formData, {
         headers: {
           'Authorization': `Bearer ${authToken}`
         },
@@ -91,7 +91,7 @@ const Product = () => {
   const handleDiscountSave = async () => {
     try {
       const res = await axios.post(
-        `http://127.0.0.1:4000/product/${productId}/discount`,
+        `https://api.citratechsolar.com/product/${productId}/discount`,
         { discount, discountOfferExpires: discountExpiry },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
@@ -122,7 +122,7 @@ const Product = () => {
               <div className="item">
                 <img
                   crossorigin="anonymous"
-                  src={`http://127.0.0.1:4000/item-media-files/${product.mediaFilesPicture[0]}`}
+                  src={`https://api.citratechsolar.com/item-media-files/${product.mediaFilesPicture[0]}`}
                   alt={product.productTitle}
                   className="itemImg"
                 />

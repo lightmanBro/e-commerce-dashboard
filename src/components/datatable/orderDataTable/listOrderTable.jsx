@@ -27,7 +27,7 @@ const Orders = () => {
           return;
         }
 
-        const response = await axios.get('http://127.0.0.1:4000/orders/list', {
+        const response = await axios.get('https://api.citratechsolar.com/orders/list', {
           headers: { Authorization: `Bearer ${authToken}` },
         });
 

@@ -25,7 +25,7 @@ const Home = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     const token = Cookies.get('token');
-
+    console.log(user);
     if (token) {
       setToken(token);
       setUser(user);
@@ -38,15 +38,16 @@ const Home = () => {
     const fetchData = async () => {
       if (token) {
         try {
-          const salesResponse = await axios.get("http://127.0.0.1:4000/sales/all", {
+          const salesResponse = await axios.get("https://api.citratechsolar.com/sales/all", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          const summaryResponse = await axios.get("http://127.0.0.1:4000/summary", {
+          const summaryResponse = await axios.get("https://api.citratechsolar.com/summary", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
           setSalesData(salesResponse.data.data);
+          console.log(salesResponse.data.data,summaryResponse.data.data);
           setSummaryData(summaryResponse.data);
 
           const total = salesResponse.data.data.reduce(
@@ -121,28 +122,44 @@ const Home = () => {
     return null;
   };
 
+  const renderCharts = () => {
+    if (user.role === "admin" || user.role === "sales" || user.role === "support") {
+      return (
+        <div className="charts">
+          <Featured
+            title={"Revenue"}
+            totalamount={totalAmount}
+            resultamount={lastWeekRevenue}
+            desc="Last one week revenue"
+            salespercentage={salesPercentage}
+          />
+          <Chart aspect={2 / 1} title="Last 6 months (Revenue)" data={totalAmount} />
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderSalesTable = () => {
+    if (user.role === "admin" || user.role === "sales" || user.role === "support") {
+      return (
+        <div className="listContainer">
+          <div className="listTitle">Latest Transactions</div>
+          <SalesTable salesData={salesData} />
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="home">
       <Sidebar active={"dashboard"} />
       <div className="homeContainer">
         <Navbar user={user} />
         <div className="widgets">{renderWidgets()}</div>
-        {user && user.role === "admin" && (
-          <div className="charts">
-            <Featured
-              title={"Revenue"}
-              totalamount={totalAmount}
-              resultamount={lastWeekRevenue}
-              desc="Last one week revenue"
-              salespercentage={salesPercentage}
-            />
-            <Chart aspect={2 / 1} title="Last 6 months (Revenue)" data={totalAmount} />
-          </div>
-        )}
-        <div className="listContainer">
-          <div className="listTitle">Latest Transactions</div>
-          <SalesTable salesData={salesData} />
-        </div>
+        {renderCharts()}
+        {renderSalesTable()}
       </div>
     </div>
   );

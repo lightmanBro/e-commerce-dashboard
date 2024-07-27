@@ -16,7 +16,7 @@ const Address = () => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:4000/user/addresses");
+        const response = await axios.get("https://api.citratechsolar.com/user/addresses");
         setAddresses(response.data.address);
       } catch (error) {
         console.error("Error fetching addresses:", error);
@@ -41,7 +41,7 @@ const Address = () => {
 
   const handleSaveAddress = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:4000/user/address", {
+      const response = await axios.post("https://api.citratechsolar.com/user/address", {
         type: addressForm.type,
         details: addressForm,
       });

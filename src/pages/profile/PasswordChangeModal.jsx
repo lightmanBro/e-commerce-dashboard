@@ -23,7 +23,7 @@ const PasswordChangeModal = ({token, isOpen, onClose }) => {
 
     try {
       const response = await axios.patch(
-        "http://127.0.0.1:4000/user/password-reset",
+        "https://api.citratechsolar.com/user/password-reset",
         { oldPassword: currentPassword, newPassword },
         {
           headers: {

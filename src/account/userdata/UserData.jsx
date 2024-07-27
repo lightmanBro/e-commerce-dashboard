@@ -8,7 +8,7 @@ const UserData = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:4000/user/details/${"6670252561cede15e3036223"}`);
+        const response = await axios.get(`https://api.citratechsolar.com/user/details/${"6670252561cede15e3036223"}`);
         console.log(response.data);
         setUser(response.data); // Assuming API returns user data object
       } catch (error) {

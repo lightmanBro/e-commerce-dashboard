@@ -8,7 +8,7 @@ const Suggestions = () => {
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:4000/user/recentlyViewed');
+        const response = await axios.get('https://api.citratechsolar.com/user/recentlyViewed');
         setSuggestions(response.data.suggestions);
       } catch (error) {
         console.error('Error fetching suggestions:', error);
@@ -25,7 +25,7 @@ const Suggestions = () => {
         {suggestions.length > 0 ? (
           suggestions.map(item => (
             <div key={item._id} className="item">
-              <img src={`http://127.0.0.1:4000/items-media-files/${item.mediaFilesPicture[0]}`} alt={item.productTitle} />
+              <img src={`https://api.citratechsolar.com/items-media-files/${item.mediaFilesPicture[0]}`} alt={item.productTitle} />
               <h3>{item.productTitle}</h3>
               <p>{item.shortDesc}</p>
               <p>Price: {item.price}</p>

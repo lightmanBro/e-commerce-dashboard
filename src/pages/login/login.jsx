@@ -34,7 +34,7 @@ const Auth = () => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:4000/forget-password", { email });
+      const response = await axios.post("https://api.citratechsolar.com/forget-password", { email });
       setMessage(`Check your email for reset link: ${response.data.resetUrl}`);
       setError("");
     } catch (err) {
@@ -50,7 +50,7 @@ const Auth = () => {
       return;
     }
     try {
-      const response = await axios.post(`http://127.0.0.1:4000/reset-password/${token}`, { password });
+      const response = await axios.post(`https://api.citratechsolar.com/reset-password/${token}`, { password });
       setMessage("Password reset successful");
       setError("");
       setTimeout(() => navigate("/login"), 3000);

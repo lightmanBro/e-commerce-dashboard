@@ -54,10 +54,10 @@ const SingleProductPage = () => {
     const fetchProductDetails = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:4000/product/one/${productId}`
+          `https://api.citratechsolar.com/product/one/${productId}`
         );
         const review = await axios.get(
-          `http://127.0.0.1:4000/product/review/${productId}`
+          `https://api.citratechsolar.com/product/review/${productId}`
         );
         if (response.data.data.post) {
           console.log(response.data.data.post, "reviews", review.data);
@@ -86,7 +86,7 @@ const SingleProductPage = () => {
   const addToCart = async (product) => {
     // Handle adding to cart
     console.log("Added to cart:");
-    const cartRes = await axios.post(`http://127.0.0.1:4000/cart`, {
+    const cartRes = await axios.post(`https://api.citratechsolar.com/cart`, {
       productId,
       quantity: 1,
       userId: "667050ecdafa4dd0270f272f",

@@ -25,6 +25,7 @@ import CheckoutPage from "./checkout/CheckoutPage";
 import AccountDetails from "./account/AccountDetails";
 import ReviewPage from "./review/Review";
 // import { DarkModeContext } from "./context/darkModeContext";
+import Receipt from "./components/datatable/receipt/Receipt";
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/account" element={<AccountDetails />} />
           <Route path="/review/:userId" element={<ReviewPage/>}/>
+          <Route path="/receipt" element={<Receipt/>}/>
         </Routes>
       </BrowserRouter>
     </div>
