@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';

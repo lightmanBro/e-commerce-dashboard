@@ -51,7 +51,7 @@ const New = ({ inputs, title }) => {
     } else {
       fetchClassData();
     }
-  }, []);
+  }, [navigate,token]);
 
   
   const { getRootProps, getInputProps } = useDropzone({

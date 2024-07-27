@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // import Widget from "../../components/widget/Widget";
 import Cookies from 'js-cookie'

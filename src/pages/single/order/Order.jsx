@@ -23,6 +23,7 @@ const OrderProcessingPage = () => {
     setAuthToken(Cookies.get('token')); // Update token from cookies
     setUserData(JSON.parse(localStorage.getItem('user'))); // Update user data from local storage
     fetchOrderDetails(orderId);
+    
   }, []);
 
   const fetchOrderDetails = async (orderId) => {

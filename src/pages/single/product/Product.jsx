@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/sidebar/Sidebar";
 import { useDropzone } from 'react-dropzone';
-import { useNavigate } from "react-router-dom";
 import Navbar from "../../../components/navbar/Navbar";
 import Cookies from 'js-cookie';
 import Modal from "react-modal";

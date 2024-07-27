@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Single.scss";
 import "./SingleTable.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Cookies from 'js-cookie';
-import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/navbar/Navbar";
 import Chart from "../../components/chart/Chart";
 import axios from "axios";
@@ -32,7 +31,7 @@ const Single = () => {
       }
     };
     fetchSiteUser();
-  }, []);
+  }, [authToken, userId]);
 
   return (
     <div className="single">
