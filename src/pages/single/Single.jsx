@@ -15,6 +15,8 @@ const Single = () => {
   const { userId } = useParams();
   const [siteUser, setSiteUser] = useState({});
   const [orders, setOrders] = useState([]);
+  const user = JSON.parse(localStorage.getItem('user'));
+
 
   useEffect(() => {
     setAuthToken(Cookies.get('token'));
