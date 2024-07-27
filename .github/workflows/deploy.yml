@@ -29,5 +29,5 @@ jobs:
           server: ${{ secrets.GIT_CPANEL_REACT_SERVER }}
           username: ${{ secrets.GIT_CPANEL_REACT_USERNAME }}
           password: ${{ secrets.GIT_CPANEL_REACT_PASSWORD }}
-          protocol: ftps  # Change to 'sftp' if required
+          protocol:  ${{ secrets.GIT_CPANEL_REACT_PROTOCOL }}
           local-dir: ./build/
