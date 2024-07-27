@@ -64,7 +64,7 @@ const Auth = () => {
     <div className="auth-container">
       {view === "login" && (
         <div className="auth-form">
-          <h2>Login</h2>
+          <h2>Admin Login</h2>
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleLogin}>
             <div>
