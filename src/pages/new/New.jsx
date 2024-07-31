@@ -89,6 +89,7 @@ const New = ({ inputs, title }) => {
         await axios.post("https://api.citratechsolar.com/create-new-item",itemFormData, {
           headers: {
             Authorization: `Bearer ${Cookies.get('token')}`,
+            'Content-Type':'multipart/form-data'
           },
         });
 
