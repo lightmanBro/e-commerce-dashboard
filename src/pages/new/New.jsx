@@ -70,38 +70,49 @@ const New = ({ inputs, title }) => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    
-
+  
     try {
       const itemFormData = new FormData();
       itemFormData.append("status", itemStatus);
       itemFormData.append("publishDate", publishDate);
-
+  
       Object.keys(formData).forEach((key) => {
         itemFormData.append(key, formData[key]);
       });
-
+  
       files.forEach((file) => {
-        itemFormData.append(`files`, file);
+        itemFormData.append('files', file);
       });
-
+  
+      const token = Cookies.get('token');
+  
+      const fetchOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        },
+        body: itemFormData
+      };
+  
+      let response;
       if (title === "Add new Product") {
-        await axios.post("https://citratechsolar.com/create-new-item",itemFormData, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
+        response = await fetch("https://citratechsolar.com/create-new-item", fetchOptions);
       } else if (title === "Add new User") {
-        console.log(itemFormData);
-        await axios.post("https://api.citratechsolar.com/support/register",formData, {
+        response = await fetch("https://api.citratechsolar.com/support/register", {
+          method: 'POST',
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
+          body: JSON.stringify(formData)
         });
       }
-
+  
+      if (!response.ok) {
+        throw new Error(`Error creating ${title}: ${response.statusText}`);
+      }
+  
       setSuccessMessage(`${title.split(" ")[2]} created successfully!`);
     } catch (error) {
       console.error(`Error creating ${title}:`, error);
