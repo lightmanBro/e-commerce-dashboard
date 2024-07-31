@@ -27,7 +27,7 @@ const Product = () => {
   useEffect(() => {
     fetchProduct();
     fetchReviews();
-  }, []);
+  }, [handleSaveClick,handleDeleteFile,productId,authToken]);
 
   const fetchProduct = async () => {
     try {
