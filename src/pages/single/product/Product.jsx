@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/sidebar/Sidebar";
-import { useDropzone } from 'react-dropzone';
+import { useDropzone } from "react-dropzone";
 import Navbar from "../../../components/navbar/Navbar";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import Modal from "react-modal";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -21,32 +21,37 @@ const Product = () => {
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [discountExpiry, setDiscountExpiry] = useState(new Date());
-  const authToken=Cookies.get('token')
-  const userData = JSON.parse(localStorage.getItem('user'))
+  const authToken = Cookies.get("token");
+  const userData = JSON.parse(localStorage.getItem("user"));
+
+  const fetchProduct = async () => {
+    try {
+      const res = await axios.get(
+        `http://127.0.0.1:4000/product/${productId}`,
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+      const { product, prices } = res.data;
+      setProduct(product);
+      setPrice(prices);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:4000/product/review/${productId}`
+      );
+      setReviews(response.data);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await axios.get(`https://api.citratechsolar.com/product/${productId}`, {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        const { product, prices } = res.data;
-        setProduct(product);
-        setPrice(prices);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
-
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(`https://api.citratechsolar.com/product/review/${productId}`);
-        setReviews(response.data);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    };
-
     fetchProduct();
     fetchReviews();
   }, [productId, authToken]);
@@ -55,36 +60,56 @@ const Product = () => {
 
   const handleSaveClick = async (event, editedProduct, files) => {
     event.preventDefault();
-  
+
     const formData = new FormData();
-    formData.append('productTitle', editedProduct.productTitle);
-    formData.append('price', editedProduct.price);
-    formData.append('shortDesc', editedProduct.shortDesc);
-    formData.append('additionalInfo', editedProduct.additionalInfo);
-    formData.append('specification', editedProduct.specification);
-    formData.append('status', editedProduct.status);
-    formData.append('scheduledDate', editedProduct.scheduledDate);
-    formData.append('files', files);
-  
+    formData.append("productTitle", editedProduct.productTitle);
+    formData.append("price", editedProduct.price);
+    formData.append("shortDesc", editedProduct.shortDesc);
+    formData.append("additionalInfo", editedProduct.additionalInfo);
+    formData.append("specification", editedProduct.specification);
+    formData.append("status", editedProduct.status);
+    formData.append("scheduledDate", editedProduct.scheduledDate);
+    editedProduct.files.forEach((file) => {
+      formData.append(`files`, file);
+    });
+
     try {
-      console.log({...formData.entries()})
-      await axios.patch(`https://api.citratechsolar.com/update-item/${productId}`, formData, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        },
-      });
-      setProduct(editedProduct); // Update the local product state
+      await axios.patch(
+        `http://127.0.0.1:4000/update-item/${productId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      await fetchProduct(); // Refresh product data after update
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving product:", error);
     }
   };
-  
+
+  const handleDeleteFile = async (filename, productId) => {
+    try {
+      const response = await axios.delete(
+        `http://127.0.0.1:4000/delete-file/${productId}/${filename}`
+      );
+      if (response.data.status === "Success") {
+        console.log(`File ${filename} deleted successfully.`);
+        await fetchProduct(); // Refresh product data after deletion
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(`Failed to delete file: ${filename}`, error);
+    }
+  };
 
   const handleDiscountSave = async () => {
     try {
       const res = await axios.post(
-        `https://api.citratechsolar.com/product/${productId}/discount`,
+        `http://127.0.0.1:4000/product/${productId}/discount`,
         { discount, discountOfferExpires: discountExpiry },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
@@ -98,7 +123,6 @@ const Product = () => {
   if (!product) {
     return <div>Loading...</div>;
   }
-
 
   return (
     <div className="single">
@@ -115,7 +139,7 @@ const Product = () => {
               <div className="item">
                 <img
                   crossorigin="anonymous"
-                  src={`https://api.citratechsolar.com/item-media-files/${product.mediaFilesPicture[0]}`}
+                  src={`http://127.0.0.1:4000/item-media-files/${product.mediaFilesPicture[0]}`}
                   alt={product.productTitle}
                   className="itemImg"
                 />
@@ -206,9 +230,14 @@ const Product = () => {
           <div className="imgContainer">
             {product.mediaFilesPicture.map((img, index) => (
               <div key={index} className="img">
+                <button
+                  className="deleteBtn"
+                  onClick={() => handleDeleteFile(img,productId)}>
+                  X
+                </button>
                 <img
                   crossorigin="anonymous"
-                  src={`http://localhost:4000/item-media-files/${img}`}
+                  src={`http://127.0.0.1:4000/item-media-files/${img}`}
                   alt={`Product ${index + 1}`}
                   className="itemImg"
                 />
@@ -224,17 +253,30 @@ const Product = () => {
             ))}
           </div>
         </div>
-
-        <DiscountModal
-          isOpen={isDiscountModalOpen}
-          onClose={() => setIsDiscountModalOpen(false)}
-          discount={discount}
-          setDiscount={setDiscount}
-          discountExpiry={discountExpiry}
-          setDiscountExpiry={setDiscountExpiry}
-          onSave={handleDiscountSave}
-        />
       </div>
+      <Modal
+        isOpen={isDiscountModalOpen}
+        onRequestClose={() => setIsDiscountModalOpen(false)}
+        contentLabel="Discount Modal"
+        className="modal">
+        <h2>Set Discount</h2>
+        <label>
+          Discount Percentage:
+          <input
+            type="number"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
+          />
+        </label>
+        <label>
+          Discount Expiry:
+          <DatePicker
+            selected={discountExpiry}
+            onChange={(date) => setDiscountExpiry(date)}
+          />
+        </label>
+        <button onClick={handleDiscountSave}>Save</button>
+      </Modal>
     </div>
   );
 };
@@ -242,52 +284,44 @@ const Product = () => {
 const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
   const [editedProduct, setEditedProduct] = useState({
     ...product,
-    scheduledDate: product.scheduledDate ? new Date(product.scheduledDate) : new Date(),
-    files: [], // to hold the dropped files
+    files: product.files || [],
   });
 
-  const handleChange = (e) => {
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    onDrop: (acceptedFiles) => {
+      setEditedProduct((prevProduct) => ({
+        ...prevProduct,
+        files: [...prevProduct.files, ...acceptedFiles],
+      }));
+    },
+  });
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
   };
 
-  const handleDateChange = (date) => {
-    setEditedProduct((prevProduct) => ({
-      ...prevProduct,
-      scheduledDate: date,
-    }));
+  const handleSaveClick = (event) => {
+    onSave(event, editedProduct, editedProduct.files);
+    onClose();
   };
-
-  const handleSave = (event) => {
-    event.preventDefault();
-    onSave(event, editedProduct); // Pass the updated product state
-  };
-
-  const handleDrop = (acceptedFiles) => {
-    // Check if files are images
-    const validFiles = acceptedFiles.filter(file => file.type.startsWith('image/'));
-    setEditedProduct((prevProduct) => ({
-      ...prevProduct,
-      files: validFiles,
-    }));
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: handleDrop,
-    accept: 'image/*', // Accept only images
-  });
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} className="modal">
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Edit Product"
+      className="modal">
       <h2>Edit Product</h2>
-      <form onSubmit={handleSave}>
+      <form>
         <label>
-          Name:
+          Product Title:
           <input
             type="text"
             name="productTitle"
             value={editedProduct.productTitle}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </label>
         <label>
@@ -296,7 +330,7 @@ const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
             type="number"
             name="price"
             value={editedProduct.price}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </label>
         <label>
@@ -304,117 +338,73 @@ const EditProductModal = ({ isOpen, onClose, product, onSave }) => {
           <textarea
             name="shortDesc"
             value={editedProduct.shortDesc}
-            onChange={handleChange}
-          ></textarea>
+            onChange={handleInputChange}
+          />
         </label>
         <label>
-          Additional Info:
+          Additional Information:
           <textarea
             name="additionalInfo"
             value={editedProduct.additionalInfo}
-            onChange={handleChange}
-          ></textarea>
+            onChange={handleInputChange}
+          />
         </label>
         <label>
           Specification:
           <textarea
             name="specification"
             value={editedProduct.specification}
-            onChange={handleChange}
-          ></textarea>
+            onChange={handleInputChange}
+          />
         </label>
         <label>
           Status:
           <select
             name="status"
             value={editedProduct.status}
-            onChange={handleChange}
-          >
+            onChange={handleInputChange}>
             <option value="draft">Draft</option>
             <option value="published">Published</option>
-            <option value="schedule">Scheduled</option>
+            <option value="scheduled">Scheduled</option>
           </select>
         </label>
-        {editedProduct.status === "schedule" && (
+        {editedProduct.status === "scheduled" && (
           <label>
             Scheduled Date:
             <DatePicker
-              selected={editedProduct.scheduledDate}
-              onChange={handleDateChange}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="dd/MM/yyyy h:mm aa"
+              selected={new Date(editedProduct.scheduledDate)}
+              onChange={(date) =>
+                setEditedProduct((prevProduct) => ({
+                  ...prevProduct,
+                  scheduledDate: date,
+                }))
+              }
             />
           </label>
         )}
-
-        <div {...getRootProps({ className: 'dropzone' })}>
+        <div {...getRootProps()} className="dropzone">
           <input {...getInputProps()} />
           <p>Drag 'n' drop some files here, or click to select files</p>
         </div>
-
-        <div className="preview">
+        <div className="uploaded-images">
           {editedProduct.files.map((file, index) => (
-            <img
-              key={index}
-              src={URL.createObjectURL(file)}
-              alt={`Preview ${index + 1}`}
-              className="preview-image"
-            />
+            <div key={index} className="image-preview">
+              <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} />
+              <button
+                onClick={() =>
+                  setEditedProduct((prevProduct) => ({
+                    ...prevProduct,
+                    files: prevProduct.files.filter((_, i) => i !== index),
+                  }))
+                }>
+                X
+              </button>
+            </div>
           ))}
         </div>
-
-        <button type="submit">Save</button>
-        <button type="button" onClick={onClose}>Cancel</button>
-      </form>
-    </Modal>
-  );
-};
-
-
-
-const DiscountModal = ({
-  isOpen,
-  onClose,
-  discount,
-  setDiscount,
-  discountExpiry,
-  setDiscountExpiry,
-  onSave,
-}) => {
-  return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} className="modal">
-      <h2>Set Discount</h2>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSave();
-        }}>
-        <label>
-          Discount:
-          <input
-            type="number"
-            value={discount}
-            onChange={(e) => setDiscount(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Discount Expiry Date:
-          <DatePicker
-            selected={discountExpiry}
-            onChange={(date) => setDiscountExpiry(date)}
-            dateFormat="dd/MM/yyyy"
-            required
-          />
-        </label>
-        <div className="btns">
-          <button type="submit">Set Discount</button>
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
-        </div>
+        <button type="submit" onClick={handleSaveClick}>
+          Save
+        </button>
       </form>
     </Modal>
   );

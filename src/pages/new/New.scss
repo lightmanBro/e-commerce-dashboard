@@ -102,6 +102,9 @@
   
             .categoryItem,
             .subcategoryItem {
+              display: flex;
+              align-items: center;
+              justify-content: center;
               padding: 5px 10px;
               border: 1px solid #ccc;
               border-radius: 5px;
@@ -119,6 +122,7 @@
                 border-color: #7451f8;
               }
             }
+            
           }
         }
       }
@@ -172,4 +176,3 @@
       }
     }
   }
-  

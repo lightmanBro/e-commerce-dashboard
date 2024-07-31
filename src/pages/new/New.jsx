@@ -34,7 +34,7 @@ const New = ({ inputs, title }) => {
       if (!token) return;
   
       try {
-        const res = await axios.get("https://api.citratechsolar.com/get-class-data", {
+        const res = await axios.get("http://127.0.0.1:4000/get-class-data", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const { brand, category, subCategory } = res.data;
@@ -70,34 +70,55 @@ const New = ({ inputs, title }) => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+  
     try {
       const itemFormData = new FormData();
       itemFormData.append("status", itemStatus);
       itemFormData.append("publishDate", publishDate);
-
+  
       Object.keys(formData).forEach((key) => {
-        itemFormData.append(key, formData[key]);
+        if (Array.isArray(formData[key])) {
+          formData[key].forEach((value) => {
+            itemFormData.append(key, value);
+          });
+        } else {
+          itemFormData.append(key, formData[key]);
+        }
       });
-
+  
       files.forEach((file) => {
-        itemFormData.append(`files`, file);
+        itemFormData.append("files", file);
       });
-
+  
       let endpoint = "";
       if (title === "Add new Product") {
-        endpoint = "https://api.citratechsolar.com/create-new-item";
+        endpoint = "http://127.0.0.1:4000/create-new-item";
       } else if (title === "Add new User") {
-        endpoint = "https://api.citratechsolar.com/support/register";
+        endpoint = "http://127.0.0.1:4000/support/register";
       }
-
+  
       await axios.post(endpoint, itemFormData, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${Cookies.get('token')}`,
         },
       });
-
+  
       setSuccessMessage(`${title.split(" ")[2]} created successfully!`);
+      
+      // Clear the form data
+      setFormData({
+        productTitle: '',
+        description: '',
+        price: '',
+        stock: '',
+        features: '',
+        otherInfo: '',
+        categories: []
+      });
+      setFiles([]);
+      setItemStatus('draft');
+      setPublishDate('');
+  
     } catch (error) {
       console.error(`Error creating ${title}:`, error);
     }
@@ -127,13 +148,13 @@ const New = ({ inputs, title }) => {
     let endpoint = "";
     let newItem = "";
     if (modal.type === "brand") {
-      endpoint = "https://api.citratechsolar.com/new-class-data";
+      endpoint = "http://127.0.0.1:4000/new-class-data";
       newItem = newBrand;
     } else if (modal.type === "category") {
-      endpoint = "https://api.citratechsolar.com/new-class-data";
+      endpoint = "http://127.0.0.1:4000/new-class-data";
       newItem = newCategory;
     } else if (modal.type === "subcategory") {
-      endpoint = "https://api.citratechsolar.com/new-class-data";
+      endpoint = "http://127.0.0.1:4000/new-class-data";
       newItem = newSubcategory;
     }
 
@@ -141,7 +162,7 @@ const New = ({ inputs, title }) => {
       const response = await axios.post(endpoint, {
         type: modal.type,
         title: newItem,
-      });
+      },{headers:{Authorization: `Bearer ${token}`}});
 
       if (modal.type === "brand") {
         setBrands([...brands, response.data]);
@@ -183,7 +204,7 @@ const New = ({ inputs, title }) => {
     const { item, type } = modal.data;
 
     try {
-        const response = await axios.delete("https://api.citratechsolar.com/delete-class-data", {
+        const response = await axios.delete("http://127.0.0.1:4000/delete-class-data", {
             headers: { Authorization: `Bearer ${token}` },
             data: { type, title: item } // Send the data in the body of the request
         });
@@ -341,7 +362,7 @@ const New = ({ inputs, title }) => {
                       onChange={(e) => setItemStatus(e.target.value)}
                     >
                       <option value="draft">Draft</option>
-                      <option value="publish">Publish</option>
+                      <option value="published">Publish</option>
                       <option value="schedule">Schedule</option>
                     </select>
                   </div>

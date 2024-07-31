@@ -78,7 +78,7 @@ const ListProductDatatable = () => {
           return;
         }
 
-        const response = await axios.get("https://api.citratechsolar.com/products/all", {
+        const response = await axios.get("http://127.0.0.1:4000/products/all", {
           signal,
           headers: { Authorization: `Bearer ${authToken}` },
         });
@@ -93,7 +93,7 @@ const ListProductDatatable = () => {
           status: item.status,
           image:
             item.mediaFilesPicture.length > 0
-              ? `https://api.citratechsolar.com/item-media-files/${item.mediaFilesPicture[0]}`
+              ? `http://127.0.0.1:4000/item-media-files/${item.mediaFilesPicture[0]}`
               : "default-image-url",
         }));
 
@@ -124,7 +124,7 @@ const ListProductDatatable = () => {
     console.log(deleteProductId);
     try {
       const response = await axios.delete(
-        `https://api.citratechsolar.com/product/${deleteProductId}`, 
+        `http://127.0.0.1:4000/product/${deleteProductId}`, 
         {
           headers: { Authorization: `Bearer ${authToken}` },
         }
