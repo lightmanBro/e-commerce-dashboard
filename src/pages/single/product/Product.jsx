@@ -27,7 +27,7 @@ const Product = () => {
   useEffect(() => {
     fetchProduct();
     fetchReviews();
-  }, [fetchProduct, fetchReviews]);
+  }, []);
 
   const fetchProduct = async () => {
     try {
