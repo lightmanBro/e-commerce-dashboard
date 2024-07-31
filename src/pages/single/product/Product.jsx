@@ -54,7 +54,7 @@ const Product = () => {
   useEffect(() => {
     fetchProduct();
     fetchReviews();
-  }, [productId, authToken]);
+  }, []);
 
   const handleEditClick = () => setIsEditing(true);
 
