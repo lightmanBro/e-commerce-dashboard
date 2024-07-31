@@ -40,7 +40,7 @@ const OrderSummary = ({
               <div key={item._id} className="item">
                 <div className="img">
                   <img
-                    src={`https://api.citratechsolar.com/item-media-files/${item.productId.mediaFilesPicture[0]}`}
+                    src={`http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`}
                     alt={item.productId.productTitle}
                   />
                 </div>
