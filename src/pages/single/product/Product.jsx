@@ -23,38 +23,7 @@ const Product = () => {
   const [discountExpiry, setDiscountExpiry] = useState(new Date());
   const authToken = Cookies.get("token");
   const userData = JSON.parse(localStorage.getItem("user"));
-
-  useEffect(() => {
-    fetchProduct();
-    fetchReviews();
-  }, [handleSaveClick,handleDeleteFile,productId,authToken]);
-
-  const fetchProduct = async () => {
-    try {
-      const res = await axios.get(
-        `http://127.0.0.1:4000/product/${productId}`,
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
-      const { product, prices } = res.data;
-      setProduct(product);
-      setPrice(prices);
-    } catch (error) {
-      console.error("Error fetching product:", error);
-    }
-  };
-
-  const fetchReviews = async () => {
-    try {
-      const response = await axios.get(
-        `http://127.0.0.1:4000/product/review/${productId}`
-      );
-      setReviews(response.data);
-    } catch (error) {
-      console.error("Error fetching reviews:", error);
-    }
-  };
+  
 
 
   const handleEditClick = () => setIsEditing(true);
@@ -84,7 +53,6 @@ const Product = () => {
           },
         }
       );
-      await fetchProduct(); // Refresh product data after update
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving product:", error);
@@ -98,7 +66,6 @@ const Product = () => {
       );
       if (response.data.status === "Success") {
         console.log(`File ${filename} deleted successfully.`);
-        await fetchProduct(); // Refresh product data after deletion
       } else {
         console.error(response.data.message);
       }
@@ -106,6 +73,37 @@ const Product = () => {
       console.error(`Failed to delete file: ${filename}`, error);
     }
   };
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:4000/product/review/${productId}`
+        );
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(
+          `http://127.0.0.1:4000/product/${productId}`,
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+        const { product, prices } = res.data;
+        setProduct(product);
+        setPrice(prices);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+  
+    fetchProduct();
+    fetchReviews();
+  }, [productId,authToken,handleDeleteFile,handleSaveClick]);
 
   const handleDiscountSave = async () => {
     try {
