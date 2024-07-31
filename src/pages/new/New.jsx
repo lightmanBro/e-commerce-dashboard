@@ -70,55 +70,40 @@ const New = ({ inputs, title }) => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-  
+    
+
     try {
       const itemFormData = new FormData();
       itemFormData.append("status", itemStatus);
       itemFormData.append("publishDate", publishDate);
-  
+
       Object.keys(formData).forEach((key) => {
-        if (Array.isArray(formData[key])) {
-          formData[key].forEach((value) => {
-            itemFormData.append(key, value);
-          });
-        } else {
-          itemFormData.append(key, formData[key]);
-        }
+        itemFormData.append(key, formData[key]);
       });
-  
+
       files.forEach((file) => {
-        itemFormData.append("files", file);
+        itemFormData.append(`files`, file);
       });
-  
+
       let endpoint = "";
+
       if (title === "Add new Product") {
-        endpoint = "https://api.citratechsolar.com/create-new-item";
+        await axios.post("https://api.citratechsolar.com/create-new-item",itemFormData, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`,
+          },
+        });
+
       } else if (title === "Add new User") {
-        endpoint = "https://api.citratechsolar.com/support/register";
+        console.log(itemFormData);
+        await axios.post("https://api.citratechsolar.com/support/register",formData, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`,
+          },
+        });
       }
-  
-      await axios.post(endpoint, itemFormData, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
-        },
-      });
-  
+
       setSuccessMessage(`${title.split(" ")[2]} created successfully!`);
-      
-      // Clear the form data
-      setFormData({
-        productTitle: '',
-        description: '',
-        price: '',
-        stock: '',
-        features: '',
-        otherInfo: '',
-        categories: []
-      });
-      setFiles([]);
-      setItemStatus('draft');
-      setPublishDate('');
-  
     } catch (error) {
       console.error(`Error creating ${title}:`, error);
     }
