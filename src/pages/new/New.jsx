@@ -97,7 +97,8 @@ const New = ({ inputs, title }) => {
   
       let response;
       if (title === "Add new Product") {
-        response = await fetch("https://citratechsolar.com/create-new-item", fetchOptions);
+        console.log(fetchOptions);
+        response = await fetch("https://api.citratechsolar.com/create-new-item", fetchOptions);
       } else if (title === "Add new User") {
         response = await fetch("https://api.citratechsolar.com/support/register", {
           method: 'POST',
