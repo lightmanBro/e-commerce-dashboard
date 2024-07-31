@@ -24,6 +24,11 @@ const Product = () => {
   const authToken = Cookies.get("token");
   const userData = JSON.parse(localStorage.getItem("user"));
 
+  useEffect(() => {
+    fetchProduct();
+    fetchReviews();
+  }, [fetchProduct, fetchReviews]);
+
   const fetchProduct = async () => {
     try {
       const res = await axios.get(
@@ -51,10 +56,6 @@ const Product = () => {
     }
   };
 
-  useEffect(() => {
-    fetchProduct();
-    fetchReviews();
-  }, []);
 
   const handleEditClick = () => setIsEditing(true);
 
