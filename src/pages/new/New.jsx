@@ -34,7 +34,7 @@ const New = ({ inputs, title }) => {
       if (!token) return;
   
       try {
-        const res = await axios.get("http://127.0.0.1:4000/get-class-data", {
+        const res = await axios.get("https://api.citratechsolar.com/get-class-data", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const { brand, category, subCategory } = res.data;
@@ -95,7 +95,7 @@ const New = ({ inputs, title }) => {
 
       } else if (title === "Add new User") {
         console.log(itemFormData);
-        await axios.post("http://127.0.0.1:4000/support/register",formData, {
+        await axios.post("https://api.citratechsolar.com/support/register",formData, {
           headers: {
             Authorization: `Bearer ${Cookies.get('token')}`,
           },
@@ -132,13 +132,13 @@ const New = ({ inputs, title }) => {
     let endpoint = "";
     let newItem = "";
     if (modal.type === "brand") {
-      endpoint = "http://127.0.0.1:4000/new-class-data";
+      endpoint = "https://api.citratechsolar.com/new-class-data";
       newItem = newBrand;
     } else if (modal.type === "category") {
-      endpoint = "http://127.0.0.1:4000/new-class-data";
+      endpoint = "https://api.citratechsolar.com/new-class-data";
       newItem = newCategory;
     } else if (modal.type === "subcategory") {
-      endpoint = "http://127.0.0.1:4000/new-class-data";
+      endpoint = "https://api.citratechsolar.com/new-class-data";
       newItem = newSubcategory;
     }
 
@@ -188,7 +188,7 @@ const New = ({ inputs, title }) => {
     const { item, type } = modal.data;
 
     try {
-        const response = await axios.delete("http://127.0.0.1:4000/delete-class-data", {
+        const response = await axios.delete("https://api.citratechsolar.com/delete-class-data", {
             headers: { Authorization: `Bearer ${token}` },
             data: { type, title: item } // Send the data in the body of the request
         });

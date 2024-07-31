@@ -23,7 +23,7 @@ const Profile = () => {
   const handleSaveClick = async (editedUser) => {
     try {
       const response = await axios.patch(
-        "http://127.0.0.1:4000/users/update-profile",
+        "https://api.citratechsolar.com/users/update-profile",
         { ...editedUser },
         {
           headers: {

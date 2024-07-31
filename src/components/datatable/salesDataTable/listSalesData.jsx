@@ -29,7 +29,7 @@ const SalesPage = () => {
           return;
         }
 
-        const response = await axios.get("http://127.0.0.1:4000/products/all", {
+        const response = await axios.get("https://api.citratechsolar.com/products/all", {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setItems(response.data);
@@ -88,7 +88,7 @@ const SalesPage = () => {
       }));
 
       // Send POST request to record sale
-      await axios.post("http://127.0.0.1:4000/sale/record", {
+      await axios.post("https://api.citratechsolar.com/sale/record", {
         salesperson:userData._id,
         itemsSold,
         totalAmount,

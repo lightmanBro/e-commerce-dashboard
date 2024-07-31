@@ -21,7 +21,7 @@ const Single = () => {
     setAuthToken(Cookies.get('token'));
     const fetchSiteUser = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:4000/users/${userId}`, {
+        const response = await axios.get(`https://api.citratechsolar.com/users/${userId}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setSiteUser(response.data);
