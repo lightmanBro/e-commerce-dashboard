@@ -103,7 +103,7 @@ const Product = () => {
   
     fetchProduct();
     fetchReviews();
-  }, [productId,authToken,handleDeleteFile,handleSaveClick]);
+  }, [productId,authToken]);
 
   const handleDiscountSave = async () => {
     try {
