@@ -85,8 +85,6 @@ const New = ({ inputs, title }) => {
         itemFormData.append(`files`, file);
       });
 
-      let endpoint = "";
-
       if (title === "Add new Product") {
         await axios.post("https://api.citratechsolar.com/create-new-item",itemFormData, {
           headers: {
