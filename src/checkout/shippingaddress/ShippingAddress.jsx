@@ -18,7 +18,7 @@ const ShippingAddress = ({ onSelectAddress, onAddAddress }) => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get("https://api.citratechsolar.com/user/addresses");
+        const response = await axios.get("http://127.0.0.1:4000/user/addresses");
         setAddresses(Object.values(response.data.address));
       } catch (error) {
         console.error("Error fetching addresses:", error);
@@ -38,7 +38,7 @@ const ShippingAddress = ({ onSelectAddress, onAddAddress }) => {
 
   const handleAddAddress = async () => {
     try {
-      const response = await axios.post("https://api.citratechsolar.com/user/address", {
+      const response = await axios.post("http://127.0.0.1:4000/user/address", {
         type: newAddress.type,
         details: newAddress,
       });

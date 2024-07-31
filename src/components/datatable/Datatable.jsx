@@ -52,7 +52,7 @@ const Datatable = () => {
     const fetchUsers = async () => {
       if (authToken) {
         try {
-          const response = await axios.get("https://api.citratechsolar.com/users/all", {
+          const response = await axios.get("http://127.0.0.1:4000/users/all", {
             headers: { Authorization: `Bearer ${authToken}` },
           });
           console.log(response.data);

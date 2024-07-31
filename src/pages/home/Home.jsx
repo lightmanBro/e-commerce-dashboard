@@ -37,11 +37,11 @@ const Home = () => {
     const fetchData = async () => {
       if (token) {
         try {
-          const salesResponse = await axios.get("https://api.citratechsolar.com/sales/all", {
+          const salesResponse = await axios.get("http://127.0.0.1:4000/sales/all", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          const summaryResponse = await axios.get("https://api.citratechsolar.com/summary", {
+          const summaryResponse = await axios.get("http://127.0.0.1:4000/summary", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
