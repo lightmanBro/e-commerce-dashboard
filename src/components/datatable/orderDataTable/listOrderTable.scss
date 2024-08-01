@@ -1,13 +1,13 @@
 .listOrderTable {
     display: flex;
     
-    .ordertable {
-      width: 100%;
-    }
     
     .dataTable {
       flex: 6;
-  
+      
+      .ordertable {
+        width: 80%;
+      }
       h1 {
         color: gray;
         padding-left: 10px;

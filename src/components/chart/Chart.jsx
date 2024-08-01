@@ -10,6 +10,7 @@ import {
 } from "recharts";
 
 const Chart = ({ aspect, title, data }) => {
+  console.log(data,title,aspect)
   const getColorByValue = (value) => {
     if (value < 100) return "#FF4500"; // Orangered
     if (value >= 100 && value < 1000) return "#FFD700"; // Lemon

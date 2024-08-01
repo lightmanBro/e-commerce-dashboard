@@ -22,14 +22,14 @@ const columns = [
       );
     },
   },
-  { field: "customer", headerName: "Customer Name", width: 200 },
-  { field: "paymentType", headerName: "Payment type", width: 250 },
+  { field: "customer", headerName: "Customer Name", width: 150 },
+  { field: "paymentType", headerName: "Payment type", width: 50 },
   { field: "deliveryTime", headerName: "Delivery Time", width: 200 },
-  { field: "totalAmount", headerName: "Amount", width: 200 },
+  { field: "totalAmount", headerName: "Amount", width: 100 },
   {
     field: "status",
     headerName: "Status",
-    width: 150,
+    width: 100,
     renderCell: (param) => {
       return (
         <div className={`cellWithStatus ${param.row.status.toLowerCase()}`}>
@@ -110,7 +110,7 @@ const Delivery = () => {
     const fetchDelivery = async () => {
       if (authToken) {
         try {
-          const response = await axios.get("https://api.citratechsolar.com/orders/shipped", {
+          const response = await axios.get("http://127.0.0.1:4000/orders/shipped", {
             headers: { Authorization: `Bearer ${authToken}` },
           });
 
@@ -120,7 +120,7 @@ const Delivery = () => {
             shippedOrders.map((order) => ({
               id: order.orderId,
               product: order.items.map((item) => item.productId.productTitle).join(", "),
-              image: order.items.map((item) => `https://api.citratechsolar.com/item-media-files/${item.productId.mediaFilesPicture[0]}`),
+              image: order.items.map((item) => `http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`),
               customer: `${order.customer.firstName} ${order.customer.lastName}`,
               paymentType: order.paymentType,
               deliveryTime: new Date(order.deliveryDate).toLocaleString(),
@@ -141,7 +141,7 @@ const Delivery = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 150,
+      width: 100,
       renderCell: (param) => {
         return (
           <div className="cellAction">

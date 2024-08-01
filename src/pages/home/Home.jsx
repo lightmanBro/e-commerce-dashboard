@@ -37,16 +37,16 @@ const Home = () => {
     const fetchData = async () => {
       if (token) {
         try {
-          const salesResponse = await axios.get("https://api.citratechsolar.com/sales/all", {
+          const salesResponse = await axios.get("http://127.0.0.1:4000/sales/all", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          const summaryResponse = await axios.get("https://api.citratechsolar.com/summary", {
+          const summaryResponse = await axios.get("http://127.0.0.1:4000/summary", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
           setSalesData(salesResponse.data.data);
-          console.log(salesResponse.data.data,summaryResponse.data.data);
+          console.log(salesResponse.data.data,summaryResponse.data);
           setSummaryData(summaryResponse.data);
 
           const total = salesResponse.data.data.reduce(
@@ -122,7 +122,7 @@ const Home = () => {
   };
 
   const renderCharts = () => {
-    if (user.role === "admin" || user.role === "sales" || user.role === "support") {
+    if (user.role === "admin" || user.role === "support") {
       return (
         <div className="charts">
           <Featured

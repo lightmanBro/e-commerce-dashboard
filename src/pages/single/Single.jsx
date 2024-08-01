@@ -21,7 +21,7 @@ const Single = () => {
     setAuthToken(Cookies.get('token'));
     const fetchSiteUser = async () => {
       try {
-        const response = await axios.get(`https://api.citratechsolar.com/users/${userId}`, {
+        const response = await axios.get(`http://127.0.0.1:4000/users/${userId}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setSiteUser(response.data);
@@ -43,11 +43,11 @@ const Single = () => {
             <div className="editBtn">Edit</div>
             <div className="title">Information</div>
             <div className="item">
-              <img
+              {/* <img
                 className="itemImg"
                 src="https://randomuser.me/api/portraits/women/10.jpg"
                 alt=""
-              />
+              /> */}
               <div className="details">
                 <h1 className="itemTitle">{`${siteUser.firstName || "No Name"} ${siteUser.lastName || ""}`}</h1>
                 <div className="detailItem">
