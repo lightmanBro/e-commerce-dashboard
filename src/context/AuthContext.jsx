@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedToken = Cookies.get('token');
     if (storedToken) {
-      axios.get('http://127.0.0.1:4000/validate-token', {
+      axios.get('https://api.citratechsolar.com/validate-token', {
         headers: { Authorization: `Bearer ${storedToken}` }
       })
       .then(response => {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const loginUser = async (email, password) => {
     try {
-      const response = await axios.post('http://127.0.0.1:4000/login', { email, password });
+      const response = await axios.post('https://api.citratechsolar.com/login', { email, password });
       const token = response.data.token;
       const userData = response.data.userData;
 
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      await axios.post('http://127.0.0.1:4000/logout', null, {
+      await axios.post('https://api.citratechsolar.com/logout', null, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerAdmin = async (email, password) => {
     try {
-      const response = await axios.post('http://127.0.0.1:4000/register', { email, password });
+      const response = await axios.post('https://api.citratechsolar.com/register', { email, password });
       return response.data;
     } catch (error) {
       console.error('Registration failed:', error.message);
