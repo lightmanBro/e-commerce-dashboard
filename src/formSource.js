@@ -3,8 +3,6 @@ export const productsInputsm = [
     { id: 2, label: "Description", type: "text", name: "shortDesc", placeholder: "120kva Inverter" },
     { id: 3, label: "Price", type: "number", name: "price", placeholder: "Price" },
     { id: 4, label: "Stock", type: "tel", name: "stock", placeholder: "In Stock" },
-    { id: 5, label: "Additional info", type: "text", name: "additionalInfo", placeholder: "Additional Info" },
-    { id: 6, label: "Specifications", type: "text", name: "specification", placeholder: "Specifications" },
   ];
   
   export const userInputs = [
