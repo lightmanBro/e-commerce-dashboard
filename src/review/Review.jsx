@@ -12,7 +12,7 @@ const ReviewPage = () => {
   useEffect(() => {
     const fetchOrderItems = async () => {
       try {
-        const { data } = await axios.get(`http://127.0.0.1:4000/orders/user/${userId}`);
+        const { data } = await axios.get(`https://api.citratechsolar.com/orders/user/${userId}`);
         const items = data.data.flatMap(order => order.items.map(item => ({
           ...item,
           orderDate: order.orderDate,
@@ -29,7 +29,7 @@ const ReviewPage = () => {
 
   const handleReviewSubmit = async (productId, rating, comment) => {
     try {
-      await axios.post(`http://127.0.0.1:4000/product/review/${productId}`, {
+      await axios.post(`https://api.citratechsolar.com/product/review/${productId}`, {
         rating,
         comment,
       });
@@ -46,7 +46,7 @@ const ReviewPage = () => {
       <div className="order-list">
         {orderItems.map((item) => (
           <div className="order-item" key={item._id}>
-            <img src={`http://127.0.0.1:4000/item-media-files/${item.productId.mediaFilesPicture[0]}`} alt={item.productTitle} />
+            <img src={`https://api.citratechsolar.com/item-media-files/${item.productId.mediaFilesPicture[0]}`} alt={item.productTitle} />
             <div className="item-details">
               <p><strong>Title:</strong> {item.productTitle}</p>
               <p><strong>Price:</strong> ₦{item.price}</p>
