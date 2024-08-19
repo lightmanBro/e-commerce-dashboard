@@ -16,7 +16,7 @@ const ReviewModal = ({ product, onClose, onSubmit }) => {
         <button className="modal-close" onClick={onClose}>&times;</button>
         <h2>Rate this Product</h2>
         <div className="product-details">
-          <img src={`https://api.citratechsolar.com/item-media-files/${product.productId.mediaFilesPicture[0]}`} alt={product.productTitle} />
+          <img src={`http://127.0.0.1:4000/item-media-files/${product.productId.mediaFilesPicture[0]}`} alt={product.productTitle} />
           <div>
             <p><strong>{product.productTitle}</strong></p>
             <p>Delivered On {new Date(product.orderDate).toLocaleDateString()}</p>

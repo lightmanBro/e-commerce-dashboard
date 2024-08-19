@@ -25,7 +25,7 @@ const OrderProcessingPage = () => {
   
     const fetchOrderDetails = async (orderId) => {
       try {
-        const response = await axios.get(`https://api.citratechsolar.com/order/${orderId}`, {
+        const response = await axios.get(`http://127.0.0.1:4000/order/${orderId}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         const data = await response.data;
@@ -96,7 +96,7 @@ const OrderProcessingPage = () => {
   const handleUpdateStatus = async (newStatus) => {
     try {
       const response = await axios.patch(
-        `https://api.citratechsolar.com/orders/${orderId}/status`,
+        `http://127.0.0.1:4000/orders/${orderId}/status`,
         { status: newStatus, deliveryTime, deliveryType },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -116,7 +116,7 @@ const OrderProcessingPage = () => {
   const handleItemStatusChange = async (itemId, newItemStatus) => {
     console.log(itemId);
     try {
-      const response = await axios.put(`https://api.citratechsolar.com/order-item/${orderId}/${itemId}/${newItemStatus}`, {}, {
+      const response = await axios.put(`http://127.0.0.1:4000/order-item/${orderId}/${itemId}/${newItemStatus}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.data.message) {
