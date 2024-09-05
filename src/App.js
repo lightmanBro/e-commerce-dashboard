@@ -20,6 +20,7 @@ import Auth from "./pages/login/login";
 import ResetPassword from "./pages/login/forgotPassword";
 // import { DarkModeContext } from "./context/darkModeContext";
 import Receipt from "./components/datatable/receipt/Receipt";
+import Payment from "./pages/payments/Payment";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="login" element={<Auth />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/sales" element={<Sales />} />
+          <Route path="/payments" element={<Payment/>}/>
           <Route path="/delivery" element={<Delivery />} />
           <Route path="users">
             <Route index element={<List />} />

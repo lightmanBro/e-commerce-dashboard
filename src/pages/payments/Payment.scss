@@ -1,0 +1,16 @@
+.payment{
+    display: flex;
+    width: 100%;
+    .payment-container{
+        flex: 6;
+        padding: 20px;
+        .top{
+            width: 100%;
+            display: block;
+            .search{
+                width: 50%;
+                margin: auto;
+            }
+        }
+    }
+}

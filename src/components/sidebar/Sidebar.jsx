@@ -11,6 +11,7 @@ import {
   AccountCircleOutlined as AccountCircleOutlinedIcon,
   LogoutOutlined as LogoutOutlinedIcon,
   MonetizationOnOutlined as MonetizationOnOutlinedIcon,
+  MoneyOffOutlined as MoneyOffOutlinedIcon
 } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -75,6 +76,12 @@ const Sidebar = ({ active }) => {
               <Link to="/delivery" style={{ textDecoration: "none" }}>
                 <LocalShippingOutlinedIcon className="icon" />
                 <span>Delivery</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/payments" style={{ textDecoration: "none" }}>
+                <MoneyOffOutlinedIcon className="icon" />
+                <span>Payments</span>
               </Link>
             </li>
             <li>

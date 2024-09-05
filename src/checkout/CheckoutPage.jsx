@@ -20,7 +20,7 @@ const CheckoutPage = () => {
   const fetchCartItems = async () => {
     try {
       const response = await axios.get(
-        `https://api.citratechsolar.com/cart/${"667050ecdafa4dd0270f272f"}`
+        `http://127.0.0.1:4000/cart/${"667050ecdafa4dd0270f272f"}`
       ); // Replace with actual userId
       setCartItems(response.data);
       console.log(response.data)
@@ -43,7 +43,7 @@ const CheckoutPage = () => {
 
   const handleUpdateItemCount = async (itemId, productId, newQuantity) => {
     try {
-      await axios.put("https://api.citratechsolar.com/cart", {
+      await axios.put("http://127.0.0.1:4000/cart", {
         userId: "667050ecdafa4dd0270f272f", // Replace with actual user ID
         productId,
         quantity: newQuantity,
@@ -71,7 +71,7 @@ const CheckoutPage = () => {
 
   const handleDeleteCartItem = async (productId) => {
     try {
-      const response = await axios.post("https://api.citratechsolar.com/cart/delete", {
+      const response = await axios.post("http://127.0.0.1:4000/cart/delete", {
         userId: "667050ecdafa4dd0270f272f", // Replace with actual user ID
         productId,
       });

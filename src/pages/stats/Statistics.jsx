@@ -8,7 +8,7 @@ import './Statistics.scss'
 const fetchData = async (period, date, month, year) => {
   const queryParams = new URLSearchParams({ period, date, month, year }).toString();
   try {
-    const response = await axios.get(`https://api.citratechsolar.com/activities/aggregates?${queryParams}`,{
+    const response = await axios.get(`http://127.0.0.1:4000/activities/aggregates?${queryParams}`,{
       headers:{Authorization:`Bearer ${Cookies.get('token')}`}
     });
     return response.data.data;

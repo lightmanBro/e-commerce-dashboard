@@ -46,7 +46,7 @@ const Product = () => {
 
     try {
       await axios.patch(
-        `https://api.citratechsolar.com/update-item/${productId}`,
+        `http://127.0.0.1:4000/update-item/${productId}`,
         formData,
         {
           headers: {
@@ -63,7 +63,7 @@ const Product = () => {
   const handleDeleteFile = async (filename, productId) => {
     try {
       const response = await axios.delete(
-        `https://api.citratechsolar.com/delete-file/${productId}/${filename}`,{headers: { Authorization: `Bearer ${authToken}` }}
+        `http://127.0.0.1:4000/delete-file/${productId}/${filename}`,{headers: { Authorization: `Bearer ${authToken}` }}
       );
       if (response.data.status === "Success") {
         console.log(`File ${filename} deleted successfully.`);
@@ -79,7 +79,7 @@ const Product = () => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(
-          `https://api.citratechsolar.com/product/review/${productId}`
+          `http://127.0.0.1:4000/product/review/${productId}`
         );
         setReviews(response.data);
       } catch (error) {
@@ -89,7 +89,7 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get(
-          `https://api.citratechsolar.com/product/${productId}`,
+          `http://127.0.0.1:4000/product/${productId}`,
           {
             headers: { Authorization: `Bearer ${authToken}` },
           }
@@ -109,7 +109,7 @@ const Product = () => {
   const handleDiscountSave = async () => {
     try {
       const res = await axios.post(
-        `https://api.citratechsolar.com/product/${productId}/discount`,
+        `http://127.0.0.1:4000/product/${productId}/discount`,
         { discount, discountOfferExpires: discountExpiry },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
@@ -139,7 +139,7 @@ const Product = () => {
               <div className="item">
                 <img
                   crossorigin="anonymous"
-                  src={`https://api.citratechsolar.com/item-media-files/${product.mediaFilesPicture[0]}`}
+                  src={`http://127.0.0.1:4000/item-media-files/${product.mediaFilesPicture[0]}`}
                   alt={product.productTitle}
                   className="itemImg"
                 />
@@ -237,7 +237,7 @@ const Product = () => {
                 </button>
                 <img
                   crossorigin="anonymous"
-                  src={`https://api.citratechsolar.com/item-media-files/${img}`}
+                  src={`http://127.0.0.1:4000/item-media-files/${img}`}
                   alt={`Product ${index + 1}`}
                   className="itemImg"
                 />
