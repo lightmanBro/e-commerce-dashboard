@@ -15,7 +15,7 @@ function Payment() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:4000/payments", {
+        const response = await axios.get("https://api.citratechsolar.com/payments", {
           headers: { Authorization: `Bearer ${Cookies.get('token')}` }
         });
         setPayments(response.data);
@@ -31,7 +31,7 @@ function Payment() {
   const handleSearch = async ({ query, searchBy }) => {
     try {
       const response = await axios.post(
-        `http://127.0.0.1:4000/payments/search?searchBy=${searchBy}&query=${query}`,
+        `https://api.citratechsolar.com/payments/search?searchBy=${searchBy}&query=${query}`,
         {},
         { headers: { Authorization: `Bearer ${Cookies.get('token')}` } }
       );

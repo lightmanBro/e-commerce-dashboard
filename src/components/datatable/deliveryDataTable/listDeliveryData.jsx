@@ -110,7 +110,7 @@ const Delivery = () => {
     const fetchDelivery = async () => {
       if (authToken) {
         try {
-          const response = await axios.get("http://127.0.0.1:4000/orders/shipped", {
+          const response = await axios.get("https://api.citratechsolar.com/orders/shipped", {
             headers: { Authorization: `Bearer ${authToken}` },
           });
 
